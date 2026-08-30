@@ -77,7 +77,15 @@ def main():
             print(f"  would publish {cid}: {len(files)} files, tier={client.get('tier')}, "
                   f"site={client.get('deploy',{}).get('netlify_site_id') or 'NEW'}")
             continue
-        status, res = post(f"{backend.rstrip('/')}/api/deploy", key, {"client": client, "files": files})
+        # Send siteId explicitly. deploy.js resolves it as body.siteId ->
+        # Blobs -> new site, and never reads client.deploy.netlify_site_id, so
+        # without this line a stale Blobs entry silently wins over the repo and
+        # the publish lands on whatever site was used last.
+        payload = {"client": client, "files": files}
+        pinned = (client.get("deploy") or {}).get("netlify_site_id")
+        if pinned:
+            payload["siteId"] = pinned
+        status, res = post(f"{backend.rstrip('/')}/api/deploy", key, payload)
         if status == 200:
             d = client.setdefault("deploy", {})
             d.update({"netlify_site_id": res.get("siteId", ""), "netlify_url": res.get("url", ""),
