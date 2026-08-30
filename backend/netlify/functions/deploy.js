@@ -92,14 +92,24 @@ export default async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
   if (req.method !== "POST") return json(405, { error: "POST only" });
 
-  const {
-    NETLIFY_TOKEN, NETLIFY_TEAM_SLUG,
-    OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET,
-    BUILDER_KEY, CLAIM_WEBHOOK, TOOL_URL,
-  } = process.env;
+  const { NETLIFY_TEAM_SLUG, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, CLAIM_WEBHOOK, TOOL_URL } = process.env;
 
-  if (!NETLIFY_TOKEN) return json(500, { error: "NETLIFY_TOKEN is not set on this function" });
-  if (BUILDER_KEY && req.headers.get("x-builder-key") !== BUILDER_KEY) {
+  // Two names for the same two things. The site was configured with the ACP_*
+  // / NETLIFY_API_TOKEN names before this function was merged in; accepting
+  // both means nothing has to be renamed in the Netlify UI, where a typo costs
+  // a debugging session.
+  const NETLIFY_TOKEN = process.env.NETLIFY_TOKEN || process.env.NETLIFY_API_TOKEN;
+  const BUILDER_KEY = process.env.BUILDER_KEY || process.env.ACP_ADMIN_KEY;
+
+  if (!NETLIFY_TOKEN) {
+    return json(500, { error: "No Netlify token: set NETLIFY_TOKEN (or NETLIFY_API_TOKEN) on this function" });
+  }
+  // Fail CLOSED. This endpoint spends sites on a real Netlify account, so an
+  // unset key must refuse rather than wave everyone through.
+  if (!BUILDER_KEY) {
+    return json(503, { error: "No builder key configured: set BUILDER_KEY (or ACP_ADMIN_KEY) on this function" });
+  }
+  if (req.headers.get("x-builder-key") !== BUILDER_KEY) {
     return json(401, { error: "Bad or missing x-builder-key" });
   }
 
