@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div class="wrap"><p class="crumbs"><a href="{{ url('/') }}">Home</a> › Gallery</p><h1>Project gallery</h1><p class="lead">Recent {{ trade_label | lower }} work by {{ c.short_name }} around {{ c.city }}.</p></div></div>
+<section><div class="wrap">
+  <div class="chips" data-acp-chips></div>
+  <div class="gal" data-acp-gallery data-endpoint="{{ gallery_endpoint }}" data-client-id="{{ c.client_id }}">{% for s in c.services %}{% for i in range(2) %}<figure><div class="ph">{{ s.name }}</div></figure>{% endfor %}{% endfor %}</div>
+</div></section>
+{% endblock %}

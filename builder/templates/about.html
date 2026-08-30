@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div class="wrap"><p class="crumbs"><a href="{{ url('/') }}">Home</a> › About</p><h1>About {{ c.short_name }}</h1><p class="lead">{{ c.hero_subhead }}</p></div></div>
+<section><div class="wrap two">
+  <div class="fade">
+    <h2>{% if c.owner %}Run by {{ c.owner }}{% else %}Local, licensed, accountable{% endif %}</h2>
+    <p>{{ c.business_name }} is a licensed {{ trade_label | lower }} contractor based in {{ c.city }}, Arizona{% if c.years_in_business %}, with {{ c.years_in_business }} years of work in the area{% endif %}. The license — ROC #{{ c.roc_number }}, class {{ c.license_class }} — is bonded and insured, and it's public: anyone can check its status and complaint history at azroc.gov.</p>
+    <p>Estimates are free and put in writing. The crew you meet at the estimate is the crew that shows up to do the work.</p>
+    <ul class="checks">{% for w in c.why_us %}<li>{{ w }}</li>{% endfor %}</ul>
+    <a class="verify" href="{{ roc_url }}" rel="noopener" target="_blank">Verify ROC #{{ c.roc_number }} →</a>
+  </div>
+  <div class="stat fade"><div><strong>{{ c.roc_number }}</strong>ROC license</div><div><strong>{{ c.license_class }}</strong>License class</div><div><strong>{{ c.years_in_business or c.city }}</strong>{% if c.years_in_business %}Years in business{% else %}Based here{% endif %}</div><div><strong>{{ c.service_area | length }}</strong>Communities served</div></div>
+</div></section>
+<section class="alt"><div class="wrap"><h2>Service area</h2><div class="areas">{% for a in c.service_area %}<a href="{{ url('/service-area/' ~ slug(a) ~ '/') }}">{{ a }}</a>{% endfor %}</div></div></section>
+{% endblock %}

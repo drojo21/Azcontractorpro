@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div class="wrap"><p class="crumbs"><a href="{{ url('/') }}">Home</a> › FAQ</p><h1>Frequently asked questions</h1></div></div>
+<section><div class="wrap">{% for f in c.faqs %}<details{% if loop.first %} open{% endif %}><summary>{{ f.q }}</summary><p>{{ f.a }}</p></details>{% endfor %}</div></section>
+{% endblock %}

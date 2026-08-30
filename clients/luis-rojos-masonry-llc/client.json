@@ -1,0 +1,136 @@
+{
+  "business_name": "Luis Rojo's Masonry LLC",
+  "city": "Tucson",
+  "client_id": "luis-rojos-masonry-llc",
+  "deploy": {
+    "claim_link_sent_at": "",
+    "claimed_at": "",
+    "custom_domain": "",
+    "last_built_at": "",
+    "last_tier_built": "",
+    "netlify_site_id": "",
+    "netlify_url": "",
+    "repo": ""
+  },
+  "email": "info@luisrojomasonry.com",
+  "emergency_service": false,
+  "facebook_url": "",
+  "faqs": [
+    {
+      "a": "Yes. Luis Rojo's Masonry LLC holds Arizona ROC license #337881, a KB-2 classification, and carries liability insurance. You can verify it at azroc.gov.",
+      "q": "Is Luis Rojo's Masonry LLC licensed and insured?"
+    },
+    {
+      "a": "We serve Tucson, Oro Valley, Marana, Vail, Sahuarita, Green Valley, Catalina Foothills and the surrounding communities.",
+      "q": "What areas do you serve?"
+    },
+    {
+      "a": "No. Estimates are free and done on site, and you get the scope and price in writing before anyone starts work. Call (520) 481-7579 to schedule.",
+      "q": "Do you charge for estimates?"
+    },
+    {
+      "a": "We handle paver driveways & patios, stamped concrete, block & retaining walls, artificial turf.",
+      "q": "What masonry services do you offer?"
+    },
+    {
+      "a": "It depends on scope, but you get a schedule in writing with the estimate — including what happens if weather or inspections move a date.",
+      "q": "How long does a typical project take?"
+    },
+    {
+      "a": "Search ROC #337881 at azroc.gov. It takes about thirty seconds and shows license status, classification, and any complaint history.",
+      "q": "How do I verify your contractor license?"
+    }
+  ],
+  "hero_subhead": "Licensed masonry work in Tucson — free written estimates, and the same crew from first day to final walkthrough.",
+  "hours": "Mo-Fr 07:00-17:00, Sa 08:00-14:00",
+  "integrations": {
+    "facebook_page_id": "",
+    "gallery_endpoint": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJ/exec",
+    "google_place_id": "",
+    "lead_endpoint": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJ/exec",
+    "notification_email": "info@luisrojomasonry.com",
+    "portal_url": ""
+  },
+  "license_class": "KB-2",
+  "license_class_description": "",
+  "marketing": {
+    "fb_interests": [
+      "Home improvement",
+      "Outdoor living",
+      "Patio design",
+      "Home renovation"
+    ],
+    "gbp_primary_category": "Masonry Contractor",
+    "gbp_secondary_category": "Concrete Contractor"
+  },
+  "owner": "Luis Rojo",
+  "owner_first_name": "Luis",
+  "payment_plans": "",
+  "phone": "(520) 481-7579",
+  "reviews": [],
+  "roc_number": "337881",
+  "roc_status": "Active",
+  "schema_version": "1.0",
+  "service_area": [
+    "Tucson",
+    "Oro Valley",
+    "Marana",
+    "Vail",
+    "Sahuarita",
+    "Green Valley",
+    "Catalina Foothills"
+  ],
+  "services": [
+    {
+      "name": "Paver Driveways & Patios",
+      "slug": "paver-driveways-patios",
+      "summary": "Paver Driveways & Patios for Tucson homeowners, done by a licensed crew."
+    },
+    {
+      "name": "Stamped Concrete",
+      "slug": "stamped-concrete",
+      "summary": "Stamped Concrete for Tucson homeowners, done by a licensed crew."
+    },
+    {
+      "name": "Block & Retaining Walls",
+      "slug": "block-retaining-walls",
+      "summary": "Block & Retaining Walls for Tucson homeowners, done by a licensed crew."
+    },
+    {
+      "name": "Artificial Turf",
+      "slug": "artificial-turf",
+      "summary": "Artificial Turf for Tucson homeowners, done by a licensed crew."
+    },
+    {
+      "name": "Outdoor Living Features",
+      "slug": "outdoor-living-features",
+      "summary": "Outdoor Living Features for Tucson homeowners, done by a licensed crew."
+    }
+  ],
+  "short_name": "Luis Rojo's Masonry",
+  "site_url": "https://luisrojomasonry.com",
+  "state": "AZ",
+  "tagline": "Built Solid. Built to Last.",
+  "target_customer": "both",
+  "theme": {
+    "accent": "#d97706",
+    "accent_dark": "#b26205",
+    "body_font": "Lato",
+    "display_font": "Oswald",
+    "google_fonts": "Oswald:wght@400;500;700|Lato:wght@400;700",
+    "primary": "#78350f",
+    "primary_dark": "#5e290c",
+    "primary_light": "#90593a"
+  },
+  "tier": "full",
+  "trade": "masonry",
+  "trade_confidence": "high",
+  "why_us": [
+    "Licensed, bonded, and insured — ROC #337881, verifiable at azroc.gov in about thirty seconds",
+    "Free on-site estimates, written before any work starts",
+    "The same crew from the first day to the final walkthrough",
+    "12 years of Tucson masonry work still standing"
+  ],
+  "years_in_business": 12,
+  "zip": "85713"
+}

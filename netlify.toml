@@ -1,0 +1,17 @@
+# Backend (Netlify Functions + Blobs). The contractor sites are NOT built by
+# Netlify from this repo — GitHub Actions builds them and publishes each one to
+# its own Netlify site through backend/netlify/functions/deploy.js.
+#
+# In the Netlify UI for acp-backend-tucson: Site configuration → Build & deploy
+# → Build settings → Base directory = backend  (this file sets it too).
+[build]
+  base      = "backend"
+  publish   = "public"
+  functions = "netlify/functions"
+  command   = "npm install"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  node_bundler = "esbuild"

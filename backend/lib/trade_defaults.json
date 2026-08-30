@@ -1,0 +1,2195 @@
+{
+  "_meta": {
+    "version": "2.0.0",
+    "purpose": "Single source of truth for trade themes, defaults, and ROC license inference. Python (acp_schema.py), JS (acp-schema.js), and the SKILL.md files all read THIS file. Do not copy these tables anywhere else.",
+    "verify": "roc.class_map is derived from real ROC data, not guesswork. Re-run rebuild_defaults.py against a newer export when ROC adds classifications.",
+    "hours_default": "Mo-Fr 07:00-17:00, Sa 08:00-14:00",
+    "price_range_default": "$$"
+  },
+  "fonts": {
+    "Outfit": "Outfit:wght@400;600;700",
+    "DM Sans": "DM+Sans:wght@400;500",
+    "Oswald": "Oswald:wght@400;500;700",
+    "Lato": "Lato:wght@400;700",
+    "Inter": "Inter:wght@400;500;700",
+    "Source Sans 3": "Source+Sans+3:wght@400;600",
+    "Poppins": "Poppins:wght@400;500;700",
+    "Open Sans": "Open+Sans:wght@400;600"
+  },
+  "trades": {
+    "electrical": {
+      "label": "Electrical",
+      "theme": {
+        "primary": "#1e3a8a",
+        "accent": "#fbbf24",
+        "display_font": "Outfit",
+        "body_font": "DM Sans"
+      },
+      "icon": "bolt",
+      "tagline": "Powering Homes with Confidence.",
+      "gbp": {
+        "primary": "Electrician",
+        "secondary": "Electrical Installation Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Smart home",
+        "Solar energy",
+        "Home renovation"
+      ],
+      "keywords": [
+        "electric",
+        "electrical",
+        "wiring",
+        "panel",
+        "lighting",
+        "solar",
+        "generator"
+      ],
+      "default_services": [
+        {
+          "slug": "panel-upgrades",
+          "name": "Panel Upgrades",
+          "summary": "Service panel replacements and capacity upgrades to code, permitted and inspected."
+        },
+        {
+          "slug": "rewiring",
+          "name": "Rewiring & Repairs",
+          "summary": "Whole-home and partial rewiring, troubleshooting, and repair of failing circuits."
+        },
+        {
+          "slug": "lighting-installation",
+          "name": "Lighting Installation",
+          "summary": "Interior, exterior, and landscape lighting installed clean and controlled properly."
+        },
+        {
+          "slug": "ev-chargers",
+          "name": "EV Charger Installation",
+          "summary": "Level 2 charger circuits sized, permitted, and installed for daily home charging."
+        }
+      ]
+    },
+    "plumbing": {
+      "label": "Plumbing",
+      "theme": {
+        "primary": "#0369a1",
+        "accent": "#22c55e",
+        "display_font": "Outfit",
+        "body_font": "DM Sans"
+      },
+      "icon": "wrench",
+      "tagline": "Fast Fixes. Fair Prices. Licensed Pros.",
+      "gbp": {
+        "primary": "Plumber",
+        "secondary": "Drain Cleaning Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Home renovation",
+        "DIY home projects"
+      ],
+      "keywords": [
+        "plumb",
+        "plumbing",
+        "drain",
+        "sewer",
+        "water heater",
+        "repipe"
+      ],
+      "default_services": [
+        {
+          "slug": "drain-cleaning",
+          "name": "Drain & Sewer Cleaning",
+          "summary": "Camera-inspected drain clearing that finds the cause instead of just moving the clog."
+        },
+        {
+          "slug": "water-heaters",
+          "name": "Water Heaters",
+          "summary": "Tank and tankless water heater replacement, repair, and code-compliant installation."
+        },
+        {
+          "slug": "repiping",
+          "name": "Repiping",
+          "summary": "Whole-house repipes in PEX or copper, with drywall patching coordinated up front."
+        },
+        {
+          "slug": "leak-repair",
+          "name": "Leak Detection & Repair",
+          "summary": "Slab, wall, and supply-line leaks located and repaired before they become damage."
+        }
+      ]
+    },
+    "hvac": {
+      "label": "HVAC",
+      "theme": {
+        "primary": "#1e40af",
+        "accent": "#ef4444",
+        "display_font": "Outfit",
+        "body_font": "DM Sans"
+      },
+      "icon": "snowflake",
+      "tagline": "Cool Comfort. Hot Service. Always Licensed.",
+      "gbp": {
+        "primary": "HVAC Contractor",
+        "secondary": "Air Conditioning Repair Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Energy efficiency",
+        "Smart thermostat"
+      ],
+      "keywords": [
+        "hvac",
+        "air conditioning",
+        "refrigeration",
+        "heating",
+        "cooling",
+        "a/c",
+        "ac repair"
+      ],
+      "default_services": [
+        {
+          "slug": "ac-repair",
+          "name": "A/C Repair",
+          "summary": "Diagnosis and repair of failing cooling systems, with the fault explained before work starts."
+        },
+        {
+          "slug": "system-replacement",
+          "name": "System Replacement",
+          "summary": "Right-sized replacement systems installed with proper load calculation, not guesswork."
+        },
+        {
+          "slug": "maintenance-plans",
+          "name": "Maintenance Plans",
+          "summary": "Seasonal tune-ups that catch failures before the first hundred-degree week."
+        },
+        {
+          "slug": "ductwork",
+          "name": "Ductwork & Airflow",
+          "summary": "Duct sealing, repair, and redesign for rooms that never seem to cool."
+        }
+      ]
+    },
+    "masonry": {
+      "label": "Masonry",
+      "theme": {
+        "primary": "#78350f",
+        "accent": "#d97706",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "brick",
+      "tagline": "Built Solid. Built to Last.",
+      "gbp": {
+        "primary": "Masonry Contractor",
+        "secondary": "Concrete Contractor"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Outdoor living",
+        "Patio design",
+        "Home renovation"
+      ],
+      "keywords": [
+        "masonry",
+        "brick",
+        "block",
+        "paver",
+        "stucco",
+        "stone",
+        "retaining wall"
+      ],
+      "default_services": [
+        {
+          "slug": "paver-driveways",
+          "name": "Paver Driveways & Patios",
+          "summary": "Interlocking pavers set on a properly compacted base with edge restraints on every open side."
+        },
+        {
+          "slug": "block-walls",
+          "name": "Block & Retaining Walls",
+          "summary": "Engineered block and retaining walls, permitted and inspected where the height requires it."
+        },
+        {
+          "slug": "stucco",
+          "name": "Stucco & Plaster",
+          "summary": "New stucco and repair work matched to the existing texture and color."
+        },
+        {
+          "slug": "outdoor-living",
+          "name": "Outdoor Living Features",
+          "summary": "BBQ islands, fire pits, seat walls, and shade structures built to match the house."
+        }
+      ]
+    },
+    "roofing": {
+      "label": "Roofing",
+      "theme": {
+        "primary": "#991b1b",
+        "accent": "#f59e0b",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "house",
+      "tagline": "Your Roof. Our Reputation. Done Right.",
+      "gbp": {
+        "primary": "Roofing Contractor",
+        "secondary": "Roof Repair Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Home insurance",
+        "Real estate",
+        "Home renovation"
+      ],
+      "keywords": [
+        "roof",
+        "roofing",
+        "shingle",
+        "tile roof",
+        "foam roof",
+        "reroof"
+      ],
+      "default_services": [
+        {
+          "slug": "roof-replacement",
+          "name": "Roof Replacement",
+          "summary": "Full tear-off and replacement with underlayment and flashing done to manufacturer spec."
+        },
+        {
+          "slug": "roof-repair",
+          "name": "Roof Repair",
+          "summary": "Leak tracing and targeted repair, with photos of the actual failure point."
+        },
+        {
+          "slug": "foam-coatings",
+          "name": "Foam & Coatings",
+          "summary": "Spray foam and elastomeric coating systems for flat and low-slope roofs."
+        },
+        {
+          "slug": "tile-repair",
+          "name": "Tile Roof Repair",
+          "summary": "Broken tile replacement and underlayment renewal without redoing the whole roof."
+        }
+      ]
+    },
+    "general": {
+      "label": "General",
+      "theme": {
+        "primary": "#1f2937",
+        "accent": "#3b82f6",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "hammer",
+      "tagline": "Licensed. Local. Ready to Build.",
+      "gbp": {
+        "primary": "General Contractor",
+        "secondary": "Home Builder"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Home renovation",
+        "Real estate",
+        "New home"
+      ],
+      "keywords": [
+        "general",
+        "general contractor",
+        "remodel",
+        "addition",
+        "builder",
+        "construction"
+      ],
+      "default_services": [
+        {
+          "slug": "home-additions",
+          "name": "Home Additions",
+          "summary": "Permitted room additions and casitas managed from plans through final inspection."
+        },
+        {
+          "slug": "kitchen-bath",
+          "name": "Kitchen & Bath Remodels",
+          "summary": "Full remodels with one crew coordinating trades instead of you chasing subs."
+        },
+        {
+          "slug": "whole-home-renovation",
+          "name": "Whole-Home Renovation",
+          "summary": "Large-scope renovations scheduled in phases so the house stays livable where possible."
+        },
+        {
+          "slug": "repairs-maintenance",
+          "name": "Repairs & Maintenance",
+          "summary": "Structural and finish repairs handled under one licensed contract."
+        }
+      ]
+    },
+    "painting": {
+      "label": "Painting",
+      "theme": {
+        "primary": "#4c1d95",
+        "accent": "#f472b6",
+        "display_font": "Poppins",
+        "body_font": "Open Sans"
+      },
+      "icon": "palette",
+      "tagline": "Color Done Right the First Time.",
+      "gbp": {
+        "primary": "Painter",
+        "secondary": "House Painter"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Interior design",
+        "Home renovation",
+        "Home decor"
+      ],
+      "keywords": [
+        "paint",
+        "painting",
+        "coating",
+        "wall covering",
+        "repaint"
+      ],
+      "default_services": [
+        {
+          "slug": "interior-painting",
+          "name": "Interior Painting",
+          "summary": "Prepped, masked, and cut-in interior work with the furniture protected properly."
+        },
+        {
+          "slug": "exterior-painting",
+          "name": "Exterior Painting",
+          "summary": "Exterior repaints with proper prep and coatings rated for sun exposure."
+        },
+        {
+          "slug": "cabinet-refinishing",
+          "name": "Cabinet Refinishing",
+          "summary": "Sprayed cabinet finishes that hold up to daily use, done in place."
+        },
+        {
+          "slug": "commercial-painting",
+          "name": "Commercial Painting",
+          "summary": "Off-hours commercial work scheduled around your operating hours."
+        }
+      ]
+    },
+    "landscaping": {
+      "label": "Landscaping",
+      "theme": {
+        "primary": "#065f46",
+        "accent": "#84cc16",
+        "display_font": "Outfit",
+        "body_font": "DM Sans"
+      },
+      "icon": "leaf",
+      "tagline": "Desert Landscapes That Actually Thrive.",
+      "gbp": {
+        "primary": "Landscaper",
+        "secondary": "Landscape Designer"
+      },
+      "fb_interests": [
+        "Gardening",
+        "Outdoor living",
+        "Home improvement",
+        "Landscape design"
+      ],
+      "keywords": [
+        "landscap",
+        "irrigation",
+        "turf",
+        "hardscape",
+        "sprinkler",
+        "xeriscape"
+      ],
+      "default_services": [
+        {
+          "slug": "landscape-design",
+          "name": "Landscape Design & Install",
+          "summary": "Desert-adapted planting plans installed with the irrigation designed in from the start."
+        },
+        {
+          "slug": "irrigation",
+          "name": "Irrigation Systems",
+          "summary": "Drip and sprinkler systems installed, repaired, and zoned for actual plant needs."
+        },
+        {
+          "slug": "artificial-turf",
+          "name": "Artificial Turf",
+          "summary": "Turf installed over a compacted, draining base so it stays flat and cool-rinsing."
+        },
+        {
+          "slug": "hardscape",
+          "name": "Hardscape & Pathways",
+          "summary": "Walkways, borders, and seating areas that tie the yard together."
+        }
+      ]
+    },
+    "flooring": {
+      "label": "Flooring",
+      "theme": {
+        "primary": "#44403c",
+        "accent": "#a16207",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "planks",
+      "tagline": "Floors Laid Level. Laid Right.",
+      "gbp": {
+        "primary": "Flooring Contractor",
+        "secondary": "Floor Refinishing Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Interior design",
+        "Home renovation"
+      ],
+      "keywords": [
+        "floor",
+        "flooring",
+        "tile",
+        "carpet",
+        "hardwood",
+        "lvp",
+        "floor covering"
+      ],
+      "default_services": [
+        {
+          "slug": "tile-installation",
+          "name": "Tile Installation",
+          "summary": "Floor and wall tile set on a flat, prepared substrate with proper movement joints."
+        },
+        {
+          "slug": "luxury-vinyl",
+          "name": "Luxury Vinyl & Laminate",
+          "summary": "LVP and laminate over leveled subfloor, with transitions and trim finished cleanly."
+        },
+        {
+          "slug": "hardwood",
+          "name": "Hardwood Install & Refinish",
+          "summary": "New hardwood installation and dust-controlled refinishing of existing floors."
+        },
+        {
+          "slug": "carpet",
+          "name": "Carpet",
+          "summary": "Carpet and pad installed with seams placed where you won't see them."
+        }
+      ]
+    },
+    "fencing": {
+      "label": "Fencing",
+      "theme": {
+        "primary": "#374151",
+        "accent": "#10b981",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "fence",
+      "tagline": "Boundaries Built to Last.",
+      "gbp": {
+        "primary": "Fence Contractor",
+        "secondary": "Gate Contractor"
+      },
+      "fb_interests": [
+        "Home security",
+        "Outdoor living",
+        "Home improvement",
+        "Pet owners"
+      ],
+      "keywords": [
+        "fence",
+        "fencing",
+        "gate",
+        "wrought iron",
+        "chain link"
+      ],
+      "default_services": [
+        {
+          "slug": "wrought-iron",
+          "name": "Wrought Iron Fencing",
+          "summary": "Custom iron fencing and view fence, welded and coated to resist sun and rust."
+        },
+        {
+          "slug": "block-fencing",
+          "name": "Block Fence Walls",
+          "summary": "Block privacy walls on proper footings, permitted where height requires it."
+        },
+        {
+          "slug": "gates",
+          "name": "Gates & Automation",
+          "summary": "Pedestrian and driveway gates, including automated openers and safety loops."
+        },
+        {
+          "slug": "fence-repair",
+          "name": "Fence Repair",
+          "summary": "Post resets, panel replacement, and gate realignment on existing fencing."
+        }
+      ]
+    },
+    "concrete": {
+      "label": "Concrete",
+      "theme": {
+        "primary": "#57534e",
+        "accent": "#ea580c",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "slab",
+      "tagline": "Flat. Smooth. Built to Code.",
+      "gbp": {
+        "primary": "Concrete Contractor",
+        "secondary": "Paving Contractor"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Outdoor living",
+        "Home renovation"
+      ],
+      "keywords": [
+        "concrete",
+        "flatwork",
+        "slab",
+        "stamped",
+        "driveway pour"
+      ],
+      "default_services": [
+        {
+          "slug": "driveways",
+          "name": "Concrete Driveways",
+          "summary": "Poured driveways with proper thickness, reinforcement, and control joints."
+        },
+        {
+          "slug": "patios-slabs",
+          "name": "Patios & Slabs",
+          "summary": "Patio slabs, shed pads, and equipment pads formed and finished level."
+        },
+        {
+          "slug": "stamped-decorative",
+          "name": "Stamped & Decorative",
+          "summary": "Stamped, colored, and broom-finished concrete in patterns you choose up front."
+        },
+        {
+          "slug": "concrete-repair",
+          "name": "Concrete Repair & Removal",
+          "summary": "Removal, replacement, and repair of cracked or settled flatwork."
+        }
+      ]
+    },
+    "carpentry": {
+      "label": "Carpentry",
+      "theme": {
+        "primary": "#713f12",
+        "accent": "#ca8a04",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "saw",
+      "tagline": "Measured Twice. Built Once.",
+      "gbp": {
+        "primary": "Carpenter",
+        "secondary": "Cabinet Maker"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Woodworking",
+        "Home renovation",
+        "Custom furniture"
+      ],
+      "keywords": [
+        "carpentry",
+        "carpenter",
+        "framing",
+        "cabinet",
+        "millwork",
+        "trim"
+      ],
+      "default_services": [
+        {
+          "slug": "framing",
+          "name": "Framing",
+          "summary": "Structural framing for additions, remodels, and outbuildings, square and plumb."
+        },
+        {
+          "slug": "custom-cabinetry",
+          "name": "Custom Cabinetry",
+          "summary": "Built-to-fit cabinets and built-ins for spaces stock sizes don't cover."
+        },
+        {
+          "slug": "trim-millwork",
+          "name": "Trim & Millwork",
+          "summary": "Baseboard, casing, crown, and stair trim with tight, lasting joints."
+        },
+        {
+          "slug": "decks-pergolas",
+          "name": "Decks & Pergolas",
+          "summary": "Outdoor structures built and fastened for desert sun and monsoon wind."
+        }
+      ]
+    },
+    "excavating": {
+      "label": "Excavating",
+      "theme": {
+        "primary": "#422006",
+        "accent": "#f97316",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "excavator",
+      "tagline": "We Move Dirt. Correctly.",
+      "gbp": {
+        "primary": "Excavating Contractor",
+        "secondary": "Demolition Contractor"
+      },
+      "fb_interests": [
+        "New home",
+        "Land clearing",
+        "Construction",
+        "Real estate development"
+      ],
+      "keywords": [
+        "excavat",
+        "trenching",
+        "demolition",
+        "earthwork",
+        "dirt work"
+      ],
+      "default_services": [
+        {
+          "slug": "site-excavation",
+          "name": "Site Excavation",
+          "summary": "Cut, fill, and site prep to plan elevation with compaction documented."
+        },
+        {
+          "slug": "trenching",
+          "name": "Trenching",
+          "summary": "Utility and footing trenching, located and shored to spec."
+        },
+        {
+          "slug": "demolition",
+          "name": "Demolition",
+          "summary": "Structure and flatwork demolition with hauling and disposal included."
+        },
+        {
+          "slug": "land-clearing",
+          "name": "Land Clearing",
+          "summary": "Brush, stump, and debris clearing to get a lot ready to build."
+        }
+      ]
+    },
+    "grading": {
+      "label": "Grading",
+      "theme": {
+        "primary": "#44403c",
+        "accent": "#d97706",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "grader",
+      "tagline": "Level Ground. Solid Start.",
+      "gbp": {
+        "primary": "Excavating Contractor",
+        "secondary": "Land Grading Service"
+      },
+      "fb_interests": [
+        "New home",
+        "Construction",
+        "Land development"
+      ],
+      "keywords": [
+        "grading",
+        "grade",
+        "drainage",
+        "compaction",
+        "pad prep"
+      ],
+      "default_services": [
+        {
+          "slug": "pad-prep",
+          "name": "Building Pad Prep",
+          "summary": "Engineered pads built and compacted to the geotech report before you pour."
+        },
+        {
+          "slug": "drainage",
+          "name": "Drainage & Grading",
+          "summary": "Lot grading that moves monsoon water away from the structure instead of into it."
+        },
+        {
+          "slug": "road-base",
+          "name": "Road & Driveway Base",
+          "summary": "Aggregate base placed and compacted for driveways and access roads."
+        },
+        {
+          "slug": "erosion-control",
+          "name": "Erosion Control",
+          "summary": "Swales, berms, and stabilization that hold up through the wet season."
+        }
+      ]
+    },
+    "sheetrock": {
+      "label": "Sheetrock",
+      "theme": {
+        "primary": "#525252",
+        "accent": "#0ea5e9",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "hammer",
+      "tagline": "Smooth Walls. Clean Job Sites.",
+      "gbp": {
+        "primary": "Drywall Contractor",
+        "secondary": "Drywall Installation Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Home renovation",
+        "Home remodeling"
+      ],
+      "keywords": [
+        "drywall",
+        "sheetrock",
+        "dry wall",
+        "texture",
+        "taping"
+      ],
+      "default_services": [
+        {
+          "slug": "drywall-installation",
+          "name": "Drywall Installation",
+          "summary": "Hang, tape, and finish for new construction and additions."
+        },
+        {
+          "slug": "texture-matching",
+          "name": "Texture Matching",
+          "summary": "Repairs blended into existing knockdown, orange peel, or smooth finishes."
+        },
+        {
+          "slug": "drywall-repair",
+          "name": "Drywall Repair",
+          "summary": "Water, impact, and settlement damage patched so the seam disappears."
+        },
+        {
+          "slug": "ceilings",
+          "name": "Ceilings",
+          "summary": "Popcorn removal and new ceiling finishes with the room fully masked."
+        }
+      ]
+    },
+    "pools": {
+      "label": "Swimming Pools",
+      "theme": {
+        "primary": "#075985",
+        "accent": "#22d3ee",
+        "display_font": "Outfit",
+        "body_font": "DM Sans"
+      },
+      "icon": "water",
+      "tagline": "Water Done Right. Season After Season.",
+      "gbp": {
+        "primary": "Swimming Pool Contractor",
+        "secondary": "Swimming Pool Repair Service"
+      },
+      "fb_interests": [
+        "Outdoor living",
+        "Home improvement",
+        "Swimming pools",
+        "Backyard design"
+      ],
+      "keywords": [
+        "pool",
+        "swimming pool",
+        "spa",
+        "hot tub"
+      ],
+      "default_services": [
+        {
+          "slug": "pool-construction",
+          "name": "Pool Construction",
+          "summary": "New pools engineered, permitted, and built from excavation through startup."
+        },
+        {
+          "slug": "pool-remodeling",
+          "name": "Pool Remodeling",
+          "summary": "Resurfacing, retiling, and coping replacement on pools that have aged out."
+        },
+        {
+          "slug": "equipment-repair",
+          "name": "Equipment Repair",
+          "summary": "Pumps, filters, heaters, and automation diagnosed and replaced."
+        },
+        {
+          "slug": "pool-service",
+          "name": "Pool Service",
+          "summary": "Scheduled cleaning and chemistry that keeps the water clear through summer."
+        }
+      ]
+    },
+    "handyman": {
+      "label": "Home Improvements",
+      "theme": {
+        "primary": "#334155",
+        "accent": "#f59e0b",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "toolbox",
+      "tagline": "The List You've Been Putting Off.",
+      "gbp": {
+        "primary": "Handyman",
+        "secondary": "Home Improvement Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "DIY home projects",
+        "Home renovation",
+        "Homeowners"
+      ],
+      "keywords": [
+        "handyman",
+        "home improvement",
+        "minor home",
+        "repairs"
+      ],
+      "default_services": [
+        {
+          "slug": "repairs",
+          "name": "Home Repairs",
+          "summary": "The backlog of small fixes, handled in one licensed visit."
+        },
+        {
+          "slug": "installations",
+          "name": "Installations & Mounting",
+          "summary": "Fixtures, shelving, TVs, and hardware mounted into something solid."
+        },
+        {
+          "slug": "door-window",
+          "name": "Doors & Windows",
+          "summary": "Doors that stick, windows that won't latch, and hardware that's given up."
+        },
+        {
+          "slug": "punch-lists",
+          "name": "Punch Lists",
+          "summary": "Pre-sale and post-move-in lists cleared before your deadline."
+        }
+      ]
+    },
+    "tile": {
+      "label": "Tile",
+      "theme": {
+        "primary": "#3f3f46",
+        "accent": "#0d9488",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "tile",
+      "tagline": "Straight Lines. Tight Grout.",
+      "gbp": {
+        "primary": "Tile Contractor",
+        "secondary": "Tile Installation Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Interior design",
+        "Home renovation",
+        "Bathroom design"
+      ],
+      "keywords": [
+        "tile",
+        "ceramic",
+        "porcelain",
+        "grout"
+      ],
+      "default_services": [
+        {
+          "slug": "floor-tile",
+          "name": "Floor Tile",
+          "summary": "Large-format and standard floor tile set flat with proper movement joints."
+        },
+        {
+          "slug": "showers-baths",
+          "name": "Showers & Baths",
+          "summary": "Waterproofed shower systems built to last, not just to look right on day one."
+        },
+        {
+          "slug": "backsplashes",
+          "name": "Backsplashes",
+          "summary": "Kitchen and bar backsplashes cut clean around outlets and corners."
+        },
+        {
+          "slug": "tile-repair",
+          "name": "Tile & Grout Repair",
+          "summary": "Cracked tile replacement and regrouting matched to the existing work."
+        }
+      ]
+    },
+    "lowvoltage": {
+      "label": "Low Voltage",
+      "theme": {
+        "primary": "#1e293b",
+        "accent": "#38bdf8",
+        "display_font": "Outfit",
+        "body_font": "DM Sans"
+      },
+      "icon": "signal",
+      "tagline": "Wired Clean. Working Always.",
+      "gbp": {
+        "primary": "Security System Installer",
+        "secondary": "Home Automation Company"
+      },
+      "fb_interests": [
+        "Smart home",
+        "Home security",
+        "Home theater",
+        "Home improvement"
+      ],
+      "keywords": [
+        "low voltage",
+        "security system",
+        "structured wiring",
+        "network",
+        "audio visual"
+      ],
+      "default_services": [
+        {
+          "slug": "security-cameras",
+          "name": "Security Cameras",
+          "summary": "Camera systems placed for real coverage, with the recorder somewhere safe."
+        },
+        {
+          "slug": "structured-wiring",
+          "name": "Structured Wiring",
+          "summary": "Data and coax runs terminated and labeled in a proper panel."
+        },
+        {
+          "slug": "access-control",
+          "name": "Access Control",
+          "summary": "Gate, door, and intercom systems installed and integrated."
+        },
+        {
+          "slug": "audio-video",
+          "name": "Audio & Video",
+          "summary": "Distributed audio and theater wiring done before the drywall closes."
+        }
+      ]
+    },
+    "welding": {
+      "label": "Welding & Ornamental Metal",
+      "theme": {
+        "primary": "#292524",
+        "accent": "#f97316",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "spark",
+      "tagline": "Steel That Holds. Work That Shows.",
+      "gbp": {
+        "primary": "Welder",
+        "secondary": "Metal Fabricator"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Outdoor living",
+        "Home security",
+        "Custom design"
+      ],
+      "keywords": [
+        "welding",
+        "ornamental metal",
+        "wrought iron",
+        "fabrication",
+        "metalwork"
+      ],
+      "default_services": [
+        {
+          "slug": "custom-gates",
+          "name": "Custom Gates & Railings",
+          "summary": "Fabricated iron gates, railings, and security doors built to the opening."
+        },
+        {
+          "slug": "mobile-welding",
+          "name": "Mobile Welding",
+          "summary": "On-site repair welding for equipment, trailers, and structures."
+        },
+        {
+          "slug": "shade-structures",
+          "name": "Shade Structures",
+          "summary": "Steel ramadas and carports engineered for desert wind loads."
+        },
+        {
+          "slug": "metal-repair",
+          "name": "Metal Repair",
+          "summary": "Rust repair, re-welding, and refinishing on existing ironwork."
+        }
+      ]
+    },
+    "steel": {
+      "label": "Steel Erection",
+      "theme": {
+        "primary": "#3f3f46",
+        "accent": "#eab308",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "beam",
+      "tagline": "Plumb, Square, and Signed Off.",
+      "gbp": {
+        "primary": "Structural Engineer",
+        "secondary": "Steel Erector"
+      },
+      "fb_interests": [
+        "Construction",
+        "Commercial real estate",
+        "New home",
+        "Home renovation"
+      ],
+      "keywords": [
+        "steel erection",
+        "structural steel",
+        "aluminum erection",
+        "steel and aluminum"
+      ],
+      "default_services": [
+        {
+          "slug": "structural-steel",
+          "name": "Structural Steel",
+          "summary": "Beam, column, and joist erection to stamped drawings."
+        },
+        {
+          "slug": "metal-buildings",
+          "name": "Metal Buildings",
+          "summary": "Pre-engineered building assembly from slab to sheeting."
+        },
+        {
+          "slug": "retrofit",
+          "name": "Structural Retrofit",
+          "summary": "Load-bearing modifications and beam replacement in existing structures."
+        },
+        {
+          "slug": "misc-metals",
+          "name": "Miscellaneous Metals",
+          "summary": "Stairs, catwalks, and embeds fabricated and set."
+        }
+      ]
+    },
+    "insulation": {
+      "label": "Insulation",
+      "theme": {
+        "primary": "#7c2d12",
+        "accent": "#facc15",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "layers",
+      "tagline": "Lower Bills. Quieter Rooms.",
+      "gbp": {
+        "primary": "Insulation Contractor",
+        "secondary": "Energy Efficiency Service"
+      },
+      "fb_interests": [
+        "Energy efficiency",
+        "Home improvement",
+        "Home renovation",
+        "Utility savings"
+      ],
+      "keywords": [
+        "insulation",
+        "spray foam",
+        "blown-in",
+        "radiant barrier"
+      ],
+      "default_services": [
+        {
+          "slug": "attic-insulation",
+          "name": "Attic Insulation",
+          "summary": "Blown-in attic insulation brought up to current R-value."
+        },
+        {
+          "slug": "spray-foam",
+          "name": "Spray Foam",
+          "summary": "Closed and open cell foam for walls, attics, and crawl spaces."
+        },
+        {
+          "slug": "radiant-barrier",
+          "name": "Radiant Barrier",
+          "summary": "Attic radiant barrier that cuts summer heat gain measurably."
+        },
+        {
+          "slug": "removal",
+          "name": "Removal & Remediation",
+          "summary": "Old, contaminated, or rodent-damaged insulation removed and replaced."
+        }
+      ]
+    },
+    "demolition": {
+      "label": "Demolition",
+      "theme": {
+        "primary": "#450a0a",
+        "accent": "#f97316",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "wrecking",
+      "tagline": "Down Fast. Hauled Clean.",
+      "gbp": {
+        "primary": "Demolition Contractor",
+        "secondary": "Debris Removal Service"
+      },
+      "fb_interests": [
+        "Construction",
+        "Home renovation",
+        "Real estate development",
+        "Land clearing"
+      ],
+      "keywords": [
+        "demolition",
+        "wrecking",
+        "teardown",
+        "debris removal"
+      ],
+      "default_services": [
+        {
+          "slug": "structure-demolition",
+          "name": "Structure Demolition",
+          "summary": "Full and partial teardowns with utilities disconnected first."
+        },
+        {
+          "slug": "interior-demolition",
+          "name": "Interior Demolition",
+          "summary": "Selective interior strip-out that protects what stays."
+        },
+        {
+          "slug": "concrete-removal",
+          "name": "Concrete Removal",
+          "summary": "Driveway, patio, and slab removal with hauling included."
+        },
+        {
+          "slug": "cleanup-hauling",
+          "name": "Cleanup & Hauling",
+          "summary": "Debris loaded, hauled, and disposed of with the site left clear."
+        }
+      ]
+    },
+    "fireprotection": {
+      "label": "Fire Protection",
+      "theme": {
+        "primary": "#7f1d1d",
+        "accent": "#f87171",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "flame",
+      "tagline": "Inspected. Certified. Ready.",
+      "gbp": {
+        "primary": "Fire Protection Service",
+        "secondary": "Fire Sprinkler System Contractor"
+      },
+      "fb_interests": [
+        "Commercial real estate",
+        "Property management",
+        "Business services",
+        "Construction"
+      ],
+      "keywords": [
+        "fire protection",
+        "fire sprinkler",
+        "fire alarm",
+        "suppression"
+      ],
+      "default_services": [
+        {
+          "slug": "sprinkler-systems",
+          "name": "Sprinkler Systems",
+          "summary": "Design, installation, and hydro testing to NFPA standards."
+        },
+        {
+          "slug": "fire-alarms",
+          "name": "Fire Alarm Systems",
+          "summary": "Alarm and monitoring systems installed and commissioned."
+        },
+        {
+          "slug": "inspections",
+          "name": "Inspections & Testing",
+          "summary": "Annual and quarterly testing with the paperwork your AHJ wants."
+        },
+        {
+          "slug": "suppression",
+          "name": "Suppression Systems",
+          "summary": "Kitchen hood and special hazard suppression service."
+        }
+      ]
+    },
+    "asphalt": {
+      "label": "Asphalt Paving",
+      "theme": {
+        "primary": "#27272a",
+        "accent": "#fbbf24",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "road",
+      "tagline": "Smooth Lots. Straight Stripes.",
+      "gbp": {
+        "primary": "Asphalt Contractor",
+        "secondary": "Paving Contractor"
+      },
+      "fb_interests": [
+        "Commercial real estate",
+        "Property management",
+        "Home improvement",
+        "Construction"
+      ],
+      "keywords": [
+        "asphalt",
+        "paving",
+        "seal coating",
+        "sealcoat",
+        "striping"
+      ],
+      "default_services": [
+        {
+          "slug": "paving",
+          "name": "Asphalt Paving",
+          "summary": "New asphalt and overlays placed over a properly prepared base."
+        },
+        {
+          "slug": "seal-coating",
+          "name": "Seal Coating",
+          "summary": "Seal coat applied on a real schedule to extend surface life."
+        },
+        {
+          "slug": "crack-repair",
+          "name": "Crack & Pothole Repair",
+          "summary": "Routed and filled cracks before water gets into the base."
+        },
+        {
+          "slug": "striping",
+          "name": "Striping & ADA",
+          "summary": "Layout and striping including compliant accessible spaces."
+        }
+      ]
+    },
+    "welldrilling": {
+      "label": "Well Drilling",
+      "theme": {
+        "primary": "#164e63",
+        "accent": "#84cc16",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "drill",
+      "tagline": "Water Found. Water Flowing.",
+      "gbp": {
+        "primary": "Water Well Drilling Service",
+        "secondary": "Pump Service"
+      },
+      "fb_interests": [
+        "Rural property",
+        "New home",
+        "Land development",
+        "Homesteading"
+      ],
+      "keywords": [
+        "well drilling",
+        "water well",
+        "drilling",
+        "pump"
+      ],
+      "default_services": [
+        {
+          "slug": "well-drilling",
+          "name": "Well Drilling",
+          "summary": "Permitted domestic and irrigation wells drilled and cased."
+        },
+        {
+          "slug": "pump-systems",
+          "name": "Pump Systems",
+          "summary": "Submersible pumps, pressure tanks, and controls sized correctly."
+        },
+        {
+          "slug": "well-rehab",
+          "name": "Well Rehabilitation",
+          "summary": "Yield restoration and casing repair on underperforming wells."
+        },
+        {
+          "slug": "water-testing",
+          "name": "Water Testing",
+          "summary": "Potability and mineral testing with results explained plainly."
+        }
+      ]
+    },
+    "septic": {
+      "label": "Septic Systems",
+      "theme": {
+        "primary": "#365314",
+        "accent": "#a3e635",
+        "display_font": "Inter",
+        "body_font": "Source Sans 3"
+      },
+      "icon": "tank",
+      "tagline": "Designed, Permitted, Passing.",
+      "gbp": {
+        "primary": "Septic System Service",
+        "secondary": "Excavating Contractor"
+      },
+      "fb_interests": [
+        "Rural property",
+        "New home",
+        "Home improvement",
+        "Real estate"
+      ],
+      "keywords": [
+        "septic",
+        "leach field",
+        "onsite wastewater"
+      ],
+      "default_services": [
+        {
+          "slug": "septic-install",
+          "name": "Septic Installation",
+          "summary": "New systems designed, permitted, and installed to county spec."
+        },
+        {
+          "slug": "repairs",
+          "name": "Septic Repair",
+          "summary": "Failed tanks, lines, and leach fields diagnosed before they're dug up."
+        },
+        {
+          "slug": "inspections",
+          "name": "Transfer Inspections",
+          "summary": "Real-estate transfer inspections and the report your escrow needs."
+        },
+        {
+          "slug": "pumping",
+          "name": "Pumping & Maintenance",
+          "summary": "Scheduled pumping that keeps a system from becoming a replacement."
+        }
+      ]
+    },
+    "awnings": {
+      "label": "Awnings & Patio Covers",
+      "theme": {
+        "primary": "#7c2d12",
+        "accent": "#fb923c",
+        "display_font": "Oswald",
+        "body_font": "Lato"
+      },
+      "icon": "shade",
+      "tagline": "Shade Where You Actually Sit.",
+      "gbp": {
+        "primary": "Awning Supplier",
+        "secondary": "Patio Enclosure Supplier"
+      },
+      "fb_interests": [
+        "Outdoor living",
+        "Home improvement",
+        "Patio design",
+        "Home renovation"
+      ],
+      "keywords": [
+        "awning",
+        "canopy",
+        "carport",
+        "patio cover",
+        "ramada"
+      ],
+      "default_services": [
+        {
+          "slug": "patio-covers",
+          "name": "Patio Covers",
+          "summary": "Attached and freestanding covers engineered for wind and sun."
+        },
+        {
+          "slug": "carports",
+          "name": "Carports",
+          "summary": "Vehicle covers that meet setback and permit requirements."
+        },
+        {
+          "slug": "awnings",
+          "name": "Awnings & Canopies",
+          "summary": "Fixed and retractable awnings sized to the opening they shade."
+        },
+        {
+          "slug": "screen-rooms",
+          "name": "Screen Rooms",
+          "summary": "Screened enclosures that make a patio usable in monsoon season."
+        }
+      ]
+    },
+    "signs": {
+      "label": "Signs",
+      "theme": {
+        "primary": "#312e81",
+        "accent": "#f472b6",
+        "display_font": "Poppins",
+        "body_font": "Open Sans"
+      },
+      "icon": "sign",
+      "tagline": "Seen From the Street.",
+      "gbp": {
+        "primary": "Sign Shop",
+        "secondary": "Commercial Sign Installer"
+      },
+      "fb_interests": [
+        "Small business",
+        "Business services",
+        "Commercial real estate",
+        "Marketing"
+      ],
+      "keywords": [
+        "sign",
+        "signage",
+        "channel letter",
+        "monument sign"
+      ],
+      "default_services": [
+        {
+          "slug": "channel-letters",
+          "name": "Channel Letters",
+          "summary": "Illuminated storefront letters fabricated, permitted, and installed."
+        },
+        {
+          "slug": "monument-signs",
+          "name": "Monument Signs",
+          "summary": "Ground and monument signs built to the center's design standards."
+        },
+        {
+          "slug": "vehicle-wraps",
+          "name": "Vehicle Graphics",
+          "summary": "Fleet lettering and wraps that stay legible at speed."
+        },
+        {
+          "slug": "sign-service",
+          "name": "Sign Service",
+          "summary": "Lighting repair, face replacement, and maintenance on existing signs."
+        }
+      ]
+    },
+    "glass": {
+      "label": "Glass & Glazing",
+      "theme": {
+        "primary": "#155e75",
+        "accent": "#67e8f9",
+        "display_font": "Outfit",
+        "body_font": "DM Sans"
+      },
+      "icon": "pane",
+      "tagline": "Clear Views. Clean Installs.",
+      "gbp": {
+        "primary": "Glass Repair Service",
+        "secondary": "Window Installation Service"
+      },
+      "fb_interests": [
+        "Home improvement",
+        "Interior design",
+        "Energy efficiency",
+        "Home renovation"
+      ],
+      "keywords": [
+        "glazing",
+        "glass",
+        "window replacement",
+        "shower door",
+        "mirror"
+      ],
+      "default_services": [
+        {
+          "slug": "window-replacement",
+          "name": "Window Replacement",
+          "summary": "Dual-pane replacement windows installed and sealed correctly."
+        },
+        {
+          "slug": "shower-enclosures",
+          "name": "Shower Enclosures",
+          "summary": "Frameless and framed glass enclosures templated to the opening."
+        },
+        {
+          "slug": "storefront-glass",
+          "name": "Storefront Glass",
+          "summary": "Commercial storefront systems and door glass repair."
+        },
+        {
+          "slug": "mirrors",
+          "name": "Mirrors & Custom Glass",
+          "summary": "Wall mirrors, tabletops, and custom-cut glass to order."
+        }
+      ]
+    }
+  },
+  "roc": {
+    "_note": "class_map is keyed on the FULL license class code, taken from the Class Detail column of a real ROC export. Suffix-based inference is unsound: A-11 is Steel Erection while CR-11 is Electrical, and A-14 is Asphalt Paving while CR-14 is Fencing. Inference order: (1) exact class_map hit, (2) description keywords, (3) business-name keywords, (4) 'general' at low confidence.",
+    "source": "ROC New Licenses List, 2024-05-22, 3876 records, 129 distinct class codes",
+    "class_map": {
+      "A": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "A-11": {
+        "trade": "steel",
+        "confidence": "high"
+      },
+      "A-12": {
+        "trade": "plumbing",
+        "confidence": "medium"
+      },
+      "A-14": {
+        "trade": "asphalt",
+        "confidence": "high"
+      },
+      "A-15": {
+        "trade": "asphalt",
+        "confidence": "high"
+      },
+      "A-16": {
+        "trade": "plumbing",
+        "confidence": "medium"
+      },
+      "A-17": {
+        "trade": "electrical",
+        "confidence": "high"
+      },
+      "A-4": {
+        "trade": "welldrilling",
+        "confidence": "high"
+      },
+      "A-5": {
+        "trade": "excavating",
+        "confidence": "high"
+      },
+      "A-7": {
+        "trade": "concrete",
+        "confidence": "medium"
+      },
+      "B": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "B-1": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "B-10": {
+        "trade": "pools",
+        "confidence": "high"
+      },
+      "B-2": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "B-3": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "B-4": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "B-5": {
+        "trade": "pools",
+        "confidence": "high"
+      },
+      "B-6": {
+        "trade": "pools",
+        "confidence": "high"
+      },
+      "C-1": {
+        "trade": "sheetrock",
+        "confidence": "medium"
+      },
+      "C-10": {
+        "trade": "sheetrock",
+        "confidence": "high"
+      },
+      "C-11": {
+        "trade": "electrical",
+        "confidence": "high"
+      },
+      "C-12": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "C-13": {
+        "trade": "asphalt",
+        "confidence": "high"
+      },
+      "C-14": {
+        "trade": "fencing",
+        "confidence": "high"
+      },
+      "C-16": {
+        "trade": "fireprotection",
+        "confidence": "high"
+      },
+      "C-17": {
+        "trade": "steel",
+        "confidence": "high"
+      },
+      "C-2": {
+        "trade": "excavating",
+        "confidence": "high"
+      },
+      "C-21": {
+        "trade": "landscaping",
+        "confidence": "high"
+      },
+      "C-24": {
+        "trade": "welding",
+        "confidence": "high"
+      },
+      "C-29": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "C-3": {
+        "trade": "awnings",
+        "confidence": "high"
+      },
+      "C-31": {
+        "trade": "masonry",
+        "confidence": "high"
+      },
+      "C-34": {
+        "trade": "painting",
+        "confidence": "high"
+      },
+      "C-36": {
+        "trade": "masonry",
+        "confidence": "medium"
+      },
+      "C-37": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "C-37R": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "C-38": {
+        "trade": "signs",
+        "confidence": "high"
+      },
+      "C-39": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "C-39R": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "C-4": {
+        "trade": "plumbing",
+        "confidence": "medium"
+      },
+      "C-40": {
+        "trade": "insulation",
+        "confidence": "high"
+      },
+      "C-41": {
+        "trade": "septic",
+        "confidence": "high"
+      },
+      "C-42": {
+        "trade": "roofing",
+        "confidence": "high"
+      },
+      "C-45": {
+        "trade": "hvac",
+        "confidence": "medium"
+      },
+      "C-48": {
+        "trade": "tile",
+        "confidence": "high"
+      },
+      "C-49": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "C-5": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "C-53": {
+        "trade": "welldrilling",
+        "confidence": "high"
+      },
+      "C-54": {
+        "trade": "plumbing",
+        "confidence": "medium"
+      },
+      "C-56": {
+        "trade": "welding",
+        "confidence": "high"
+      },
+      "C-57": {
+        "trade": "demolition",
+        "confidence": "high"
+      },
+      "C-58": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "C-6": {
+        "trade": "pools",
+        "confidence": "high"
+      },
+      "C-60": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "C-61": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "C-62": {
+        "trade": "handyman",
+        "confidence": "high"
+      },
+      "C-65": {
+        "trade": "glass",
+        "confidence": "high"
+      },
+      "C-67": {
+        "trade": "lowvoltage",
+        "confidence": "high"
+      },
+      "C-69": {
+        "trade": "asphalt",
+        "confidence": "high"
+      },
+      "C-7": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "C-70": {
+        "trade": "concrete",
+        "confidence": "high"
+      },
+      "C-77": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "C-79": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "C-8": {
+        "trade": "flooring",
+        "confidence": "high"
+      },
+      "C-80": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "C-9": {
+        "trade": "concrete",
+        "confidence": "high"
+      },
+      "CR-1": {
+        "trade": "sheetrock",
+        "confidence": "medium"
+      },
+      "CR-10": {
+        "trade": "sheetrock",
+        "confidence": "high"
+      },
+      "CR-11": {
+        "trade": "electrical",
+        "confidence": "high"
+      },
+      "CR-12": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "CR-13": {
+        "trade": "asphalt",
+        "confidence": "high"
+      },
+      "CR-14": {
+        "trade": "fencing",
+        "confidence": "high"
+      },
+      "CR-16": {
+        "trade": "fireprotection",
+        "confidence": "high"
+      },
+      "CR-17": {
+        "trade": "steel",
+        "confidence": "high"
+      },
+      "CR-2": {
+        "trade": "excavating",
+        "confidence": "high"
+      },
+      "CR-21": {
+        "trade": "landscaping",
+        "confidence": "high"
+      },
+      "CR-24": {
+        "trade": "welding",
+        "confidence": "high"
+      },
+      "CR-29": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "CR-3": {
+        "trade": "awnings",
+        "confidence": "high"
+      },
+      "CR-31": {
+        "trade": "masonry",
+        "confidence": "high"
+      },
+      "CR-34": {
+        "trade": "painting",
+        "confidence": "high"
+      },
+      "CR-36": {
+        "trade": "masonry",
+        "confidence": "medium"
+      },
+      "CR-37": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "CR-37R": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "CR-38": {
+        "trade": "signs",
+        "confidence": "high"
+      },
+      "CR-39": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "CR-39R": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "CR-4": {
+        "trade": "plumbing",
+        "confidence": "medium"
+      },
+      "CR-40": {
+        "trade": "insulation",
+        "confidence": "high"
+      },
+      "CR-41": {
+        "trade": "septic",
+        "confidence": "high"
+      },
+      "CR-42": {
+        "trade": "roofing",
+        "confidence": "high"
+      },
+      "CR-45": {
+        "trade": "hvac",
+        "confidence": "medium"
+      },
+      "CR-48": {
+        "trade": "tile",
+        "confidence": "high"
+      },
+      "CR-49": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "CR-5": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "CR-53": {
+        "trade": "welldrilling",
+        "confidence": "high"
+      },
+      "CR-54": {
+        "trade": "plumbing",
+        "confidence": "medium"
+      },
+      "CR-56": {
+        "trade": "welding",
+        "confidence": "high"
+      },
+      "CR-57": {
+        "trade": "demolition",
+        "confidence": "high"
+      },
+      "CR-58": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "CR-6": {
+        "trade": "pools",
+        "confidence": "high"
+      },
+      "CR-60": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "CR-61": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "CR-62": {
+        "trade": "handyman",
+        "confidence": "high"
+      },
+      "CR-65": {
+        "trade": "glass",
+        "confidence": "high"
+      },
+      "CR-67": {
+        "trade": "lowvoltage",
+        "confidence": "high"
+      },
+      "CR-69": {
+        "trade": "asphalt",
+        "confidence": "high"
+      },
+      "CR-7": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "CR-70": {
+        "trade": "concrete",
+        "confidence": "high"
+      },
+      "CR-77": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "CR-79": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "CR-8": {
+        "trade": "flooring",
+        "confidence": "high"
+      },
+      "CR-80": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "CR-9": {
+        "trade": "concrete",
+        "confidence": "high"
+      },
+      "KA": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "KA-5": {
+        "trade": "pools",
+        "confidence": "high"
+      },
+      "KA-6": {
+        "trade": "pools",
+        "confidence": "high"
+      },
+      "KB": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "KB-1": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "KB-2": {
+        "trade": "general",
+        "confidence": "high"
+      },
+      "R-1": {
+        "trade": "sheetrock",
+        "confidence": "medium"
+      },
+      "R-10": {
+        "trade": "sheetrock",
+        "confidence": "high"
+      },
+      "R-11": {
+        "trade": "electrical",
+        "confidence": "high"
+      },
+      "R-12": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "R-13": {
+        "trade": "asphalt",
+        "confidence": "high"
+      },
+      "R-14": {
+        "trade": "fencing",
+        "confidence": "high"
+      },
+      "R-16": {
+        "trade": "fireprotection",
+        "confidence": "high"
+      },
+      "R-17": {
+        "trade": "steel",
+        "confidence": "high"
+      },
+      "R-2": {
+        "trade": "excavating",
+        "confidence": "high"
+      },
+      "R-21": {
+        "trade": "landscaping",
+        "confidence": "high"
+      },
+      "R-24": {
+        "trade": "welding",
+        "confidence": "high"
+      },
+      "R-29": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "R-3": {
+        "trade": "awnings",
+        "confidence": "high"
+      },
+      "R-31": {
+        "trade": "masonry",
+        "confidence": "high"
+      },
+      "R-34": {
+        "trade": "painting",
+        "confidence": "high"
+      },
+      "R-36": {
+        "trade": "masonry",
+        "confidence": "medium"
+      },
+      "R-37": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "R-37R": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "R-38": {
+        "trade": "signs",
+        "confidence": "high"
+      },
+      "R-39": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "R-39R": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "R-4": {
+        "trade": "plumbing",
+        "confidence": "medium"
+      },
+      "R-40": {
+        "trade": "insulation",
+        "confidence": "high"
+      },
+      "R-41": {
+        "trade": "septic",
+        "confidence": "high"
+      },
+      "R-42": {
+        "trade": "roofing",
+        "confidence": "high"
+      },
+      "R-45": {
+        "trade": "hvac",
+        "confidence": "medium"
+      },
+      "R-48": {
+        "trade": "tile",
+        "confidence": "high"
+      },
+      "R-49": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "R-5": {
+        "trade": "general",
+        "confidence": "low"
+      },
+      "R-53": {
+        "trade": "welldrilling",
+        "confidence": "high"
+      },
+      "R-54": {
+        "trade": "plumbing",
+        "confidence": "medium"
+      },
+      "R-56": {
+        "trade": "welding",
+        "confidence": "high"
+      },
+      "R-57": {
+        "trade": "demolition",
+        "confidence": "high"
+      },
+      "R-58": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "R-6": {
+        "trade": "pools",
+        "confidence": "high"
+      },
+      "R-60": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "R-61": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "R-62": {
+        "trade": "handyman",
+        "confidence": "high"
+      },
+      "R-65": {
+        "trade": "glass",
+        "confidence": "high"
+      },
+      "R-67": {
+        "trade": "lowvoltage",
+        "confidence": "high"
+      },
+      "R-69": {
+        "trade": "asphalt",
+        "confidence": "high"
+      },
+      "R-7": {
+        "trade": "carpentry",
+        "confidence": "high"
+      },
+      "R-70": {
+        "trade": "concrete",
+        "confidence": "high"
+      },
+      "R-77": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "R-79": {
+        "trade": "hvac",
+        "confidence": "high"
+      },
+      "R-8": {
+        "trade": "flooring",
+        "confidence": "high"
+      },
+      "R-80": {
+        "trade": "plumbing",
+        "confidence": "high"
+      },
+      "R-9": {
+        "trade": "concrete",
+        "confidence": "high"
+      }
+    }
+  }
+}

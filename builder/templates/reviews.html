@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div class="wrap"><p class="crumbs"><a href="{{ url('/') }}">Home</a> › Reviews</p><h1>Customer reviews</h1></div></div>
+<section><div class="wrap">
+  {% if c.reviews %}<div class="grid">{% for r in c.reviews %}<div class="card fade"><div class="stars">{{ '★' * (r.rating or 5) }}</div><p class="quote">“{{ r.text }}”</p><p class="who">— {{ r.name }}{% if r.city %}, {{ r.city }}{% endif %}</p></div>{% endfor %}</div>
+  {% else %}<div class="card" style="max-width:640px"><div class="stars">★★★★★</div><p class="quote">Worked with {{ c.short_name }}? A short review helps other {{ c.city }} homeowners find a licensed contractor.</p>{% if c.integrations.google_place_id %}<a class="btn btn-primary" href="https://search.google.com/local/writereview?placeid={{ c.integrations.google_place_id }}" rel="noopener" target="_blank">Leave a Google review</a>{% endif %}</div>{% endif %}
+</div></section>
+{% endblock %}

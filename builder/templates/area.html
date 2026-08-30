@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div class="wrap"><p class="crumbs"><a href="{{ url('/') }}">Home</a> › <a href="{{ url('/about/') }}">Service area</a> › {{ page.area }}</p><h1>{{ trade_label }} contractor in {{ page.area }}, AZ</h1><p class="lead">{{ c.short_name }} serves {{ page.area }} with licensed {{ trade_label | lower }} work — free written estimates, ROC #{{ c.roc_number }}.</p><div class="ctas"><a class="btn btn-accent" href="#quote">Get a Free Quote</a><a class="btn btn-primary" href="tel:{{ tel }}">Call {{ c.phone }}</a></div></div></div>
+<section><div class="wrap">
+  <h2>Services available in {{ page.area }}</h2>
+  <div class="grid">{% for s in c.services %}<div class="card fade"><h3>{{ s.name }}</h3><p>{{ s.summary }}</p><a class="more" href="{{ url('/services/' ~ s.slug ~ '/') }}">Learn more →</a></div>{% endfor %}</div>
+  <p style="margin-top:2rem">Also serving: {% for a in c.service_area if a != page.area %}<a href="{{ url('/service-area/' ~ slug(a) ~ '/') }}">{{ a }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</p>
+</div></section>
+{% endblock %}

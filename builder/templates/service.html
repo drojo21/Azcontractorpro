@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div class="wrap">
+  <p class="crumbs"><a href="{{ url('/') }}">Home</a> › <a href="{{ url('/services/') }}">Services</a> › {{ page.service.name }}</p>
+  <h1>{{ page.service.name }} in {{ c.city }}</h1>
+  <p class="lead">{{ page.service.summary }}</p>
+  <div class="ctas"><a class="btn btn-accent" href="#quote">Get a Free Quote</a><a class="btn btn-primary" href="tel:{{ tel }}">Call {{ c.phone }}</a></div>
+</div></div>
+
+<section>
+  <div class="wrap two">
+    <div class="fade">
+      <h2>Licensed {{ page.service.name | lower }} work</h2>
+      <p>{{ c.short_name }} handles {{ page.service.name | lower }} for {% if c.target_customer == 'commercial' %}commercial properties{% elif c.target_customer == 'homeowners' %}homeowners{% else %}homeowners and businesses{% endif %} across {{ c.service_area | join(', ') }}. Every project starts with a free on-site visit and a written estimate that spells out scope, materials and schedule before any work begins.</p>
+      <p>The work is done under Arizona ROC license #{{ c.roc_number }} ({{ c.license_class }}), which means it's bonded, insured and subject to state inspection rules. You can verify the license at <a href="{{ roc_url }}" rel="noopener" target="_blank">azroc.gov</a> in about thirty seconds.</p>
+      <h3>What to expect</h3>
+      <ul class="checks"><li>Free on-site estimate, in writing</li><li>Clear schedule, including what happens if weather or inspections move a date</li><li>The same crew start to finish</li><li>Site left clean at the end of every day</li></ul>
+    </div>
+    <div class="fade">
+      <h3>Other services</h3>
+      <div class="grid" style="grid-template-columns:1fr">{% for s in c.services if s.slug != page.service.slug %}<a class="card" href="{{ url('/services/' ~ s.slug ~ '/') }}"><strong>{{ s.name }}</strong><p>{{ s.summary }}</p></a>{% endfor %}</div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>{{ page.service.name }} projects</h2>
+    <div class="gal" data-acp-gallery data-endpoint="{{ gallery_endpoint }}" data-client-id="{{ c.client_id }}" data-category="{{ page.service.name }}">
+      {% for i in range(4) %}<figure><div class="ph">{{ page.service.name }}</div></figure>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

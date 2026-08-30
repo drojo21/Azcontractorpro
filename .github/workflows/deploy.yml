@@ -1,0 +1,68 @@
+name: Build and publish contractor sites
+
+on:
+  push:
+    branches: [main]
+    paths: ["clients/**", "builder/**", "core/**", "config/**", "scripts/**", ".github/workflows/deploy.yml"]
+  workflow_dispatch:
+    inputs:
+      all:
+        description: "Rebuild and publish every client (not just changed ones)"
+        type: boolean
+        default: false
+      only:
+        description: "Space-separated client ids (optional)"
+        type: string
+        default: ""
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Schema parity (core ↔ backend)
+        run: |
+          python3 core/test_parity.py
+          ./scripts/sync_core.sh
+          git diff --exit-code backend/lib || { echo "::error::backend/lib is out of sync with core/ — run scripts/sync_core.sh and commit"; exit 1; }
+
+      - name: Build
+        run: |
+          if [ -n "${{ inputs.only }}" ]; then
+            python3 scripts/build_all.py --only ${{ inputs.only }}
+          elif [ "${{ inputs.all }}" = "true" ]; then
+            python3 scripts/build_all.py
+          else
+            python3 scripts/build_all.py --changed
+          fi
+
+      - name: Publish through backend
+        env:
+          BUILDER_KEY: ${{ secrets.BUILDER_KEY }}
+        run: python3 scripts/publish.py
+
+      # Deploy-before-commit: if publish failed we never get here, so a broken
+      # deploy leaves no half-updated client.json behind.
+      - name: Record site ids back into clients/
+        run: |
+          git config user.name "acp-bot"
+          git config user.email "acp-bot@users.noreply.github.com"
+          git add clients
+          git diff --cached --quiet || git commit -m "chore: record deploy results [skip ci]"
+          git push

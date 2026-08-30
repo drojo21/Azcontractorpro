@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div class="wrap"><p class="crumbs"><a href="{{ url('/') }}">Home</a> › Services</p><h1>{{ trade_label }} services</h1><p class="lead">Everything {{ c.short_name }} does in {{ c.city }} and the surrounding area.</p></div></div>
+<section><div class="wrap"><div class="grid">{% for s in c.services %}<div class="card fade"><div class="ico">{{ loop.index }}</div><h3>{{ s.name }}</h3><p>{{ s.summary }}</p><a class="more" href="{{ url('/services/' ~ s.slug ~ '/') }}">Learn more →</a></div>{% endfor %}</div></div></section>
+{% endblock %}

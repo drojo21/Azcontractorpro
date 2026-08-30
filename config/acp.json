@@ -1,0 +1,6 @@
+{
+  "_comment": "Non-secret platform settings. Secrets go in GitHub Actions secrets / Netlify env vars, never here.",
+  "apps_script_url": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJ/exec",
+  "backend_url": "https://acp-backend-tucson.netlify.app",
+  "default_tier": "lite"
+}
