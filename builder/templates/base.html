@@ -243,6 +243,6 @@ if(g&&g.dataset.endpoint){
 }
 })();
 </script>
-{% if lead_endpoint %}<script>{{ lead_form_js }}</script>{% endif %}
+{% if lead_endpoint %}<script>{{ lead_form_js | safe }}</script>{% endif %}
 </body>
 </html>
