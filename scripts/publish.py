@@ -88,7 +88,21 @@ def main():
         status, res = post(f"{backend.rstrip('/')}/api/deploy", key, payload)
         if status == 200:
             d = client.setdefault("deploy", {})
-            d.update({"netlify_site_id": res.get("siteId", ""), "netlify_url": res.get("url", ""),
+            returned = res.get("siteId", "")
+            # A client.json that already names a site is a deliberate choice —
+            # it is how a build gets pointed at the site holding the custom
+            # domain. The backend can answer with a different id (a stale Blobs
+            # entry, or a brand new site), and silently writing that back would
+            # quietly repoint the client at the wrong place on the next run.
+            # Keep the pin, and say so loudly.
+            if pinned and returned and returned != pinned:
+                print(f"  WARN {cid}: backend deployed to {returned} but client.json pins "
+                      f"{pinned}. Keeping the pin; the published site may be wrong — check "
+                      f"before sending anything to this contractor.")
+                bad += 1
+            elif returned and not pinned:
+                d["netlify_site_id"] = returned
+            d.update({"netlify_url": res.get("url", ""),
                       "last_built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                       "last_tier_built": res.get("tier", client.get("tier", ""))})
             if res.get("claimUrl"):
