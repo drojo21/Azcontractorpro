@@ -9,7 +9,7 @@
     <ul class="checks">{% for w in c.why_us %}<li>{{ w }}</li>{% endfor %}</ul>
     <a class="verify" href="{{ roc_url }}" rel="noopener" target="_blank">Verify ROC #{{ c.roc_number }} →</a>
   </div>
-  <div class="stat fade"><div><strong>{{ c.roc_number }}</strong>ROC license</div><div><strong>{{ c.license_class }}</strong>License class</div><div><strong>{{ c.years_in_business or c.city }}</strong>{% if c.years_in_business %}Years in business{% else %}Based here{% endif %}</div><div><strong>{{ c.service_area | length }}</strong>Communities served</div></div>
+  <div class="stat fade"><div><strong>{{ c.roc_number }}</strong>ROC license</div><div><strong>{{ c.license_class }}</strong>License class</div><div><strong{% if c.years_in_business %} class="countup" data-count="{{ c.years_in_business }}"{% endif %}>{{ c.years_in_business or c.city }}</strong>{% if c.years_in_business %}Years in business{% else %}Based here{% endif %}</div><div><strong class="countup" data-count="{{ c.service_area | length }}">{{ c.service_area | length }}</strong>Communities served</div></div>
 </div></section>
 <section class="alt"><div class="wrap"><h2>Service area</h2><div class="areas">{% for a in c.service_area %}<a href="{{ url('/service-area/' ~ slug(a) ~ '/') }}">{{ a }}</a>{% endfor %}</div></div></section>
 {% endblock %}
