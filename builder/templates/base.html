@@ -20,7 +20,7 @@
 <script type="application/ld+json">{{ block | tojson }}</script>
 {% endfor %}
 <style>
-:root{--primary:{{ c.theme.primary }};--primary-light:{{ c.theme.primary_light }};--primary-dark:{{ c.theme.primary_dark }};--accent:{{ c.theme.accent }};--accent-dark:{{ c.theme.accent_dark }};--text:#1f2937;--text-light:#6b7280;--bg:#fff;--bg-alt:#f9fafb;--border:#e5e7eb;--display:'{{ c.theme.display_font }}',system-ui,sans-serif;--body:'{{ c.theme.body_font }}',system-ui,sans-serif;--radius:10px;--shadow:0 6px 24px rgba(0,0,0,.08)}
+:root{--primary:{{ c.theme.primary }};--primary-light:{{ c.theme.primary_light }};--primary-dark:{{ c.theme.primary_dark }};--accent:{{ c.theme.accent }};--accent-dark:{{ c.theme.accent_dark }};--text:#1f2937;--text-light:#6b7280;--bg:#fff;--bg-alt:#f9fafb;--border:#e5e7eb;--display:'{{ c.theme.display_font }}',system-ui,sans-serif;--body:'{{ c.theme.body_font }}',system-ui,sans-serif;--radius:10px;--shadow:0 6px 24px rgba(0,0,0,.08){% if hero_bg_url %};--hero-bg-url:url('{{ hero_bg_url }}'){% endif %}}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{font-family:var(--body);color:var(--text);background:var(--bg);line-height:1.6;font-size:17px}
@@ -59,6 +59,7 @@ header.scrolled{box-shadow:0 2px 12px rgba(0,0,0,.25)}
 @media(min-width:768px){.links{display:flex}.burger,.mobile{display:none!important}}
 /* hero */
 .hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,var(--primary-light) 100%);background-size:200% 200%;color:#fff;padding:5rem 0 4rem;position:relative;overflow:hidden;animation:heroshift 14s ease-in-out infinite}
+{% if hero_bg_url %}.hero{background-image:var(--hero-bg-url);background-attachment:fixed;background-position:center;background-size:cover;background-blend-mode:overlay}{% endif %}
 .hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.14) 1.5px,transparent 1.5px);background-size:26px 26px;opacity:.5;mask-image:linear-gradient(180deg,#000,transparent 85%)}
 .hero::after{content:"";position:absolute;inset:auto -10% -40% auto;width:60vw;height:60vw;max-width:520px;max-height:520px;border-radius:50%;background:rgba(255,255,255,.06);animation:float 9s ease-in-out infinite}
 .hero .blob2{position:absolute;left:-8%;top:-15%;width:40vw;height:40vw;max-width:320px;max-height:320px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.12),transparent 70%);animation:float 11s ease-in-out infinite reverse}

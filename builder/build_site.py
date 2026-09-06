@@ -30,6 +30,7 @@ import sys
 from datetime import date
 from pathlib import Path
 from urllib.parse import quote
+from typing import Optional
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "core"))
@@ -82,6 +83,57 @@ def favicon(c: dict) -> str:
            f"<text x='32' y='44' font-size='36' font-family='sans-serif' font-weight='700' "
            f"text-anchor='middle' fill='{c['theme']['accent']}'>{letter}</text></svg>")
     return quote(svg)
+
+
+def get_hero_background(c: dict) -> Optional[str]:
+    """Fetch hero background image URL from Google Drive folder.
+
+    Looks for 'hero_bg_folder_id' in client.integrations.drive_folders.
+    Returns the URL of the latest image in that folder, or None if not configured.
+    """
+    try:
+        from google.auth.transport.requests import Request
+        from google.oauth2.service_account import Credentials
+        from googleapiclient.discovery import build as build_service
+    except ImportError:
+        return None
+
+    folder_id = (c.get("integrations", {})
+                 .get("drive_folders", {})
+                 .get("hero_bg_folder_id"))
+
+    if not folder_id:
+        return None
+
+    try:
+        # Try to load service account credentials from environment/config
+        creds_path = ROOT / "config" / "google-service-account.json"
+        if not creds_path.exists():
+            return None
+
+        credentials = Credentials.from_service_account_file(
+            creds_path,
+            scopes=["https://www.googleapis.com/auth/drive.readonly"]
+        )
+        service = build_service("drive", "v3", credentials=credentials)
+
+        # Query for image files in the folder, sorted by modified time (newest first)
+        results = service.files().list(
+            q=f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false",
+            spaces="drive",
+            fields="files(id, name, mimeType, webContentLink, modifiedTime)",
+            pageSize=1,
+            orderBy="modifiedTime desc"
+        ).execute()
+
+        files = results.get("files", [])
+        if files:
+            # Return the webContentLink which is a direct download link
+            return files[0].get("webContentLink")
+    except Exception as e:
+        print(f"Warning: Could not fetch background image from Drive: {e}", file=sys.stderr)
+
+    return None
 
 
 # ------------------------------------------------------------------ JSON-LD
@@ -180,11 +232,13 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
         nav = [("Services", "#services"), ("About", "#about"), ("Gallery", "#gallery"),
                ("Reviews", "#reviews"), ("FAQ", "#faq"), ("Contact", "#quote")]
 
+    hero_bg_url = get_hero_background(c)
+
     common = dict(c=c, full=full, tel=tel(c["phone"]), trade_label=trade_label,
                   hours_human=hours_human(c["hours"]), roc_url=ROC_URL + c["roc_number"],
                   lead_endpoint=lead_endpoint, gallery_endpoint=gallery_endpoint,
                   lead_form_js=lead_js, favicon=favicon(c), year=date.today().year,
-                  url=lambda p: p, slug=slugify)
+                  url=lambda p: p, slug=slugify, hero_bg_url=hero_bg_url)
 
     site_desc = (f"{c['business_name']} — licensed {trade_label.lower()} contractor in {c['city']}, AZ "
                  f"(ROC #{c['roc_number']}). {', '.join(s['name'] for s in c['services'][:3])}. "
