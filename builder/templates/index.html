@@ -19,7 +19,6 @@
     <div class="grid">
       {% for s in c.services %}
       <div class="card fade">
-        <div class="ico">{{ loop.index }}</div>
         <h3>{{ s.name }}</h3>
         <p>{{ s.summary }}</p>
         {% if full %}<a class="more" href="{{ url('/services/' ~ s.slug ~ '/') }}">Learn more →</a>{% else %}<a class="more" href="#quote">Get a quote →</a>{% endif %}
