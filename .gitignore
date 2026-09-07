@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 .env
 .netlify/
+config/google-service-account.json
