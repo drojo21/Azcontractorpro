@@ -36,6 +36,13 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Setup Google credentials
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          mkdir -p config
+          echo "$GOOGLE_SERVICE_ACCOUNT_JSON" > config/google-service-account.json
+
       - name: Schema parity (core ↔ backend)
         run: |
           python3 core/test_parity.py
