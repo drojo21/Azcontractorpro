@@ -128,10 +128,10 @@ def get_hero_background(c: dict) -> Optional[str]:
 
         files = results.get("files", [])
         if files:
-            # Use Google Drive's direct view URL format with size optimization
-            # size=w1920 tells Drive to serve a web-optimized preview at 1920px width
+            # Use Google Drive's thumbnail export for web embedding
+            # Thumbnails work better with CSS background-image due to Drive's CORS/referrer policies
             file_id = files[0].get("id")
-            return f"https://drive.google.com/uc?export=view&id={file_id}&size=w1920"
+            return f"https://drive.google.com/thumbnail?id={file_id}&sz=w1920"
     except Exception as e:
         print(f"Warning: Could not fetch background image from Drive: {e}", file=sys.stderr)
 
