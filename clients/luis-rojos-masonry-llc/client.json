@@ -6,7 +6,7 @@
     "claim_link_sent_at": "",
     "claimed_at": "",
     "custom_domain": "https://luisrojosmasonry.com",
-    "last_built_at": "2026-09-06T13:11:15+00:00",
+    "last_built_at": "2026-09-07T04:07:57+00:00",
     "last_tier_built": "full",
     "netlify_site_id": "e0eb4c0d-62a2-46b8-b906-816f32ada86a",
     "netlify_url": "https://luisrojosmasonry.com",
@@ -44,10 +44,10 @@
   "hero_subhead": "Licensed masonry work in Tucson — free written estimates, and the same crew from first day to final walkthrough.",
   "hours": "Mo-Fr 07:00-17:00, Sa 08:00-14:00",
   "integrations": {
-    "facebook_page_id": "",
     "drive_folders": {
       "hero_bg_folder_id": "1VS6CLmWTNHaSHqFq-wQY-kzlFwGjBcZp"
     },
+    "facebook_page_id": "",
     "gallery_endpoint": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJxng/exec",
     "google_place_id": "",
     "lead_endpoint": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJxng/exec",
@@ -137,5 +137,3 @@
   "years_in_business": 32,
   "zip": "85713"
 }
-
-
