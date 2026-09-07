@@ -45,6 +45,9 @@
   "hours": "Mo-Fr 07:00-17:00, Sa 08:00-14:00",
   "integrations": {
     "facebook_page_id": "",
+    "drive_folders": {
+      "hero_bg_folder_id": "1VS6CLmWTNHaSHqFq-wQY-kzlFwGjBcZp"
+    },
     "gallery_endpoint": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJxng/exec",
     "google_place_id": "",
     "lead_endpoint": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJxng/exec",
