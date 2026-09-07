@@ -20,7 +20,7 @@
 <script type="application/ld+json">{{ block | tojson }}</script>
 {% endfor %}
 <style>
-:root{--primary:{{ c.theme.primary }};--primary-light:{{ c.theme.primary_light }};--primary-dark:{{ c.theme.primary_dark }};--accent:{{ c.theme.accent }};--accent-dark:{{ c.theme.accent_dark }};--text:#1f2937;--text-light:#6b7280;--bg:#fff;--bg-alt:#f9fafb;--border:#e5e7eb;--display:'{{ c.theme.display_font }}',system-ui,sans-serif;--body:'{{ c.theme.body_font }}',system-ui,sans-serif;--radius:10px;--shadow:0 6px 24px rgba(0,0,0,.08){% if hero_bg_url %};--hero-bg-url:url('{{ hero_bg_url }}'){% endif %}}
+:root{--primary:{{ c.theme.primary }};--primary-light:{{ c.theme.primary_light }};--primary-dark:{{ c.theme.primary_dark }};--accent:{{ c.theme.accent }};--accent-dark:{{ c.theme.accent_dark }};--text:#1f2937;--text-light:#6b7280;--bg:#fff;--bg-alt:#f9fafb;--border:#e5e7eb;--display:'{{ c.theme.display_font }}',system-ui,sans-serif;--body:'{{ c.theme.body_font }}',system-ui,sans-serif;--radius:10px;--shadow:0 6px 24px rgba(0,0,0,.08){% if hero_bg_url %};--hero-bg-url:url('{{ hero_bg_url|safe }}'){% endif %}}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{font-family:var(--body);color:var(--text);background:var(--bg);line-height:1.6;font-size:17px}
