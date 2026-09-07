@@ -128,8 +128,9 @@ def get_hero_background(c: dict) -> Optional[str]:
 
         files = results.get("files", [])
         if files:
-            # Return the webContentLink which is a direct download link
-            return files[0].get("webContentLink")
+            # Use Google Drive's direct view URL format for images
+            file_id = files[0].get("id")
+            return f"https://drive.google.com/uc?export=view&id={file_id}"
     except Exception as e:
         print(f"Warning: Could not fetch background image from Drive: {e}", file=sys.stderr)
 
