@@ -9,7 +9,13 @@
  *   action=gallery   GET    list photos for a client     -> Drive folder
  *   action=portal    GET    client's own leads           -> requires PIN
  *   action=claimed   POST   record a site claim          -> Claims sheet
+ *   action=demo_ready POST  GitHub Actions: demo site is live -> email prospect (demo.gs)
  *   action=health    GET    deployment check
+ *
+ * A lead whose client_id is the sales site itself (SALES_CLIENT_ID, default
+ * "azcontractorpro") is a free-demo request: it is logged like any lead, then
+ * demo.gs fires a GitHub repository_dispatch that builds and publishes the
+ * prospect's site. See demo.gs for the round trip.
  *
  * ---------------------------------------------------------------------------
  * CORS, and why the client must post text/plain
@@ -76,7 +82,8 @@ function handle(e, method) {
       case 'gallery': return json(handleGalleryFromManifest(params));
       case 'portal':  return json(handlePortal(params));
       case 'claimed': return json(handleClaimed(body, params));
-      case 'health':  return json({ ok: true, version: '1.1', time: nowIso() });
+      case 'demo_ready': return json(handleDemoReady(body, params));
+      case 'health':  return json({ ok: true, version: '1.2', time: nowIso() });
       default:        return json({ ok: false, error: 'unknown action: ' + action }, 400);
     }
   } catch (err) {
@@ -193,7 +200,19 @@ function handleLead(body, params) {
   }
 
   notify(client, record);
-  return { ok: true, id: record.dedupe_key.substring(0, 10) };
+  var leadId = record.dedupe_key.substring(0, 10);
+
+  // Free-demo request from the sales site: kick off the site build.
+  if (clientId === salesClientId()) {
+    try {
+      startDemo(leadId, record, data);
+    } catch (err) {
+      // The lead is already saved and you were already emailed; a failed
+      // dispatch is a follow-up-by-hand, not a lost prospect.
+      console.error('demo dispatch failed for ' + leadId + ': ' + err);
+    }
+  }
+  return { ok: true, id: leadId };
 }
 
 function leadsSheetFor(client) {

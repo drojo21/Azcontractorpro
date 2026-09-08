@@ -236,7 +236,24 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
 
     hero_bg_url = get_hero_background(c)
 
+    # Demo sites (built from a free-demo request on the sales site) carry a
+    # banner, a "keep this site" section with the three checkout buttons, and
+    # noindex so a prospect's temporary URL never competes with their real site.
+    demo = bool((c.get("deploy") or {}).get("demo"))
+    square = {k: v for k, v in (cfg.get("square_links") or {}).items() if not k.startswith("_")}
+    sales = (cfg.get("sales_site_url") or "https://azcontractorpro.com").rstrip("/")
+    pricing = cfg.get("pricing") or {}
+    offers = []
+    for key in ("starter", "pro", "kit"):
+        tier_info = pricing.get(key) or {}
+        offers.append({"key": key, "name": tier_info.get("name", key.title()),
+                       "setup": tier_info.get("setup", ""), "monthly": tier_info.get("monthly", ""),
+                       "blurb": tier_info.get("blurb", ""),
+                       "href": square.get(key) or f"{sales}/#pricing",
+                       "square": bool(square.get(key))})
+
     common = dict(c=c, full=full, tel=tel(c["phone"]), trade_label=trade_label,
+                  demo=demo, offers=offers, sales_site_url=sales,
                   hours_human=hours_human(c["hours"]), roc_url=ROC_URL + c["roc_number"],
                   lead_endpoint=lead_endpoint, gallery_endpoint=gallery_endpoint,
                   lead_form_js=lead_js, favicon=favicon(c), year=date.today().year,

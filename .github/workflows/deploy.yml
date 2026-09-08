@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
     paths: ["clients/**", "builder/**", "core/**", "config/**", "scripts/**", ".github/workflows/deploy.yml"]
+  # Free-demo requests from azcontractorpro.com. The Apps Script router fires
+  # this with the form payload; see scripts/demo_request.py.
+  repository_dispatch:
+    types: [demo-request]
   workflow_dispatch:
     inputs:
       all:
@@ -49,9 +53,20 @@ jobs:
           ./scripts/sync_core.sh
           git diff --exit-code backend/lib || { echo "::error::backend/lib is out of sync with core/ — run scripts/sync_core.sh and commit"; exit 1; }
 
+      - name: Demo request -> client.json
+        id: demo
+        if: github.event_name == 'repository_dispatch'
+        env:
+          PAYLOAD: ${{ toJSON(github.event.client_payload) }}
+        run: |
+          printf '%s' "$PAYLOAD" > /tmp/demo-request.json
+          python3 scripts/demo_request.py --payload-file /tmp/demo-request.json
+
       - name: Build
         run: |
-          if [ -n "${{ inputs.only }}" ]; then
+          if [ -n "${{ steps.demo.outputs.client_id }}" ]; then
+            python3 scripts/build_all.py --only ${{ steps.demo.outputs.client_id }}
+          elif [ -n "${{ inputs.only }}" ]; then
             python3 scripts/build_all.py --only ${{ inputs.only }}
           elif [ "${{ inputs.all }}" = "true" ]; then
             python3 scripts/build_all.py
@@ -73,3 +88,14 @@ jobs:
           git add clients
           git diff --cached --quiet || git commit -m "chore: record deploy results [skip ci]"
           git push
+
+      # Tell the Apps Script the demo is live. It looks up the prospect by
+      # client_id in its Demos tab and sends the email with the site link and
+      # the three checkout buttons. APPS_SCRIPT_SECRET must match the
+      # DEMO_SECRET script property, so nobody else can trigger that email.
+      - name: Notify prospect (demo ready)
+        if: github.event_name == 'repository_dispatch' && steps.demo.outputs.client_id != ''
+        env:
+          CLIENT_ID: ${{ steps.demo.outputs.client_id }}
+          APPS_SCRIPT_SECRET: ${{ secrets.APPS_SCRIPT_SECRET }}
+        run: python3 scripts/demo_notify.py "$CLIENT_ID"
