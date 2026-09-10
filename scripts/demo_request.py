@@ -11,16 +11,25 @@ forwarded verbatim through a GitHub `repository_dispatch` (event type
 `demo-request`). Fields used: lead_id, name, business, roc, service (trade),
 city, phone, email, message.
 
-Resolution order for the business record:
-  1. ROC number found in data/*.csv        -> acp.from_roc_row (real ROC data)
-  2. business name resolves in data/*.csv  -> acp.from_roc_row (real ROC data)
-  3. a ROC number was given but is unknown -> CLIENT INFO BLOCK built from the payload
-  4. neither                               -> refused, see below
+The licence gate (core/roc_active.py) runs before anything is built. Every page
+asserts "Licensed - Bonded - Insured", carries a ROC credential in its JSON-LD
+and links to an azroc.gov verify URL, so the licence behind those claims has to
+be real AND currently active. The ROC posting list is the registrar's complete
+set of active licences, which makes absence from it a definitive answer rather
+than a failed lookup:
 
-Licensure: every built page asserts "Licensed, bonded and insured" and carries a
-ROC credential in its JSON-LD, so a demo is only built when a ROC number can be
-cited — from the roster or from the prospect. A request with no ROC number that
-the roster cannot resolve is refused rather than published with an invented one.
+  1. ROC number given     -> must be on the active list, or the request is refused
+  2. business name only   -> must resolve to exactly one active licence
+                             (a business holding several licences resolves to the
+                             one matching the requested trade; a name shared by
+                             different businesses fails closed)
+  3. neither resolves     -> refused; the lead is already captured, so it becomes
+                             a follow-up by hand rather than a false claim
+
+Licence facts on the record come from the posting list. Contact data does not —
+the posting list has no phone or email — so that is enriched from data/*.csv
+(following the business, not just the one licence number) and from the payload.
+What was verified, and against which snapshot, is written to client.roc_verified.
 
 The result is a tier=lite site with deploy.demo=true, which makes the builder
 add the demo banner, the "keep this site" section with checkout buttons, and
@@ -38,6 +47,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "core"))
 from acp_schema import ACP, digits, slugify  # noqa: E402
+from roc_active import ROCActive, norm_business  # noqa: E402
 
 DATA = [ROOT / "data" / "buildable-tucson.csv", ROOT / "data" / "buildable-statewide.csv",
         ROOT / "data" / "tucson-prospects.csv"]
@@ -77,21 +87,11 @@ def find_roc_row(roc: str):
     return None
 
 
-def norm_business(name: str) -> str:
-    """Normalized business name for roster matching: case, punctuation and the
-    entity suffix are noise ("Vega Custom Concrete, LLC." == "VEGA CUSTOM CONCRETE LLC")."""
-    n = re.sub(r"[^a-z0-9 ]", " ", str(name or "").lower())
-    n = re.sub(r"\b(llc|l l c|inc|incorporated|co|company|corp|corporation|ltd|dba)\b", " ", n)
-    return re.sub(r"\s+", " ", n).strip()
+def find_enrichment_by_name(business: str):
+    """Enrichment row for a business name, when no licence number matches one.
 
-
-def find_business_row(business: str):
-    """Resolve a name-only request against the ROC roster.
-
-    Strict on purpose: only an exact normalized match counts, and an ambiguous
-    name (two licensees normalizing the same) returns nothing. Attaching the
-    wrong contractor's licence to a prospect is its own honesty problem, so a
-    near-miss must fail closed rather than guess.
+    Unambiguous matches only, for the same reason name resolution is strict:
+    a phone number from the wrong contractor is worse than no phone number.
     """
     want = norm_business(business)
     if not want:
@@ -104,9 +104,6 @@ def find_business_row(business: str):
             for r in csv.DictReader(fh):
                 if norm_business(r.get("business_name", "")) == want:
                     hits.append(r)
-    # The rosters overlap (a Tucson licensee is also in the statewide file), so
-    # collapse on the licence number first: same ROC means one licensee, not an
-    # ambiguity. Genuinely different licensees sharing a name still fail closed.
     if hits and len({digits(h.get("roc_number", "")) for h in hits}) == 1:
         return hits[0]
     return None
@@ -146,56 +143,85 @@ def main():
     if not (business or roc):
         sys.exit("demo request needs a business name or a ROC number")
 
-    # A prospect who types only their business name still gets a demo built from
-    # their real ROC record, provided the roster resolves the name unambiguously.
-    row = find_roc_row(roc) if roc else None
-    if row is None and business:
-        row = find_business_row(business)
+    # ---------------------------------------------------------------- the gate
+    # The posting list is the registrar's complete set of ACTIVE licences, so a
+    # licence that is absent from it is not active. Nothing is built until this
+    # resolves: every page asserts "Licensed - Bonded - Insured", carries a ROC
+    # credential in its JSON-LD and links to an azroc.gov verify URL, so the
+    # licence behind those claims has to be real AND current.
+    roster = ROCActive()
+    if roc:
+        lic = roster.get(roc)
+        if not lic:
+            sys.exit(
+                f"ROC #{roc} is not on the Arizona ROC active list "
+                f"(snapshot {roster.snapshot_date}) — refusing to build a demo that would "
+                "claim a licence that is not currently active. Check the number with the "
+                "prospect, or refresh data/roc-active.csv.gz if it is out of date.")
+        lic = dict(lic, also_holds=[])
+    else:
+        lic = roster.find_by_name(business, trade=trade, city=city)
+        if not lic:
+            sys.exit(
+                f"{business or name}: no ROC number given, and the name does not resolve to "
+                f"exactly one active licence (snapshot {roster.snapshot_date}) — refusing to "
+                "build a demo that would claim licensure we cannot verify. Ask the prospect "
+                "for their ROC number and re-run, or build it by hand.")
+        roc = lic["roc_number"]
+
+    # The posting list is licence data only — no phone, no email. Those come from
+    # the enrichment CSVs when we have a row, and from the prospect otherwise.
+    # Enrichment follows the BUSINESS, not the single licence: a contractor who
+    # holds several licences may have been enriched under any one of them, so a
+    # sibling licence or the name still finds their phone number.
+    row = find_roc_row(roc)
+    for alt in lic.get("also_holds", []):
+        if row:
+            break
+        row = find_roc_row(alt["roc_number"])
+    if not row:
+        row = find_enrichment_by_name(lic["business_name"])
     if row:
         client = acp.from_roc_row(row)
         for k in ("client_id", "owner_first_name", "trade", "trade_confidence"):
             if row.get(k):
                 client[k] = row[k]
-        source = f"ROC data ({row.get('roc_number')})"
-        # The prospect's own contact beats whatever the roster had.
-        if phone:
-            client["phone"] = phone
-        if email:
-            client["email"] = email
-        if name and not client.get("owner"):
-            client["owner"] = name
-        if trade:
-            client["trade"] = trade
-            client["trade_confidence"] = "high"
+        source = f"ROC active list + enrichment ({roc})"
     else:
-        block = {
-            "BUSINESS_NAME": business or f"ROC #{roc}",
-            "OWNER_NAME": name,
+        client = acp.from_client_info_block({
+            "BUSINESS_NAME": lic["business_name"],
+            "OWNER_NAME": name or lic["qualifying_party"],
             "ROC_NUMBER": roc,
+            "LICENSE_CLASS": lic["license_class"],
             "PHONE": phone,
             "EMAIL": email,
-            "CITY": city,
-            "STATE": "AZ",
-            "ZIP": clean(payload.get("zip"), 10) or CITY_ZIP.get(city.lower(), "85701"),
+            # The registrar's own address beats a guess from the city name.
+            "CITY": lic["city"] or city,
+            "STATE": lic["state"] or "AZ",
+            "ZIP": lic["zip"] or CITY_ZIP.get(city.lower(), "85701"),
             "TRADE": trade,
             "TAGLINE": "auto",
-        }
-        client = acp.from_client_info_block(block)
-        source = "form (not in ROC data)"
-        if not roc:
-            # No licence number, and the roster does not know this business. Every
-            # page the builder emits asserts licensure — "Licensed, bonded and
-            # insured", a ROC credential in the JSON-LD, and an azroc.gov verify
-            # link — so building here would publish a claim about a real, named
-            # business that nobody has checked. Forcing roc_status to "Active" to
-            # satisfy the publish gate is exactly the exposure that gate exists to
-            # stop (backend/netlify/functions/deploy.js). Refuse instead: the lead
-            # is already captured, so this becomes a follow-up by hand.
-            sys.exit(
-                f"{business or name}: no ROC number given and the business is not in the ROC "
-                "roster — refusing to build a demo that would claim licensure we cannot verify. "
-                "Ask the prospect for their ROC number and re-run, or build it by hand."
-            )
+        })
+        source = f"ROC active list ({roc}, no enrichment row)"
+
+    # Licence facts are the registrar's, not the enrichment sheet's or the form's.
+    client["business_name"] = lic["business_name"] or client.get("business_name", "")
+    client["roc_number"] = roc
+    client["license_class"] = lic["license_class"] or client.get("license_class", "")
+    client["license_class_description"] = (lic["license_class_description"]
+                                           or client.get("license_class_description", ""))
+    client["roc_status"] = lic["roc_status"] or "Active"
+
+    # The prospect's own contact beats whatever the roster had.
+    if phone:
+        client["phone"] = phone
+    if email:
+        client["email"] = email
+    if name and not client.get("owner"):
+        client["owner"] = name
+    if trade:
+        client["trade"] = trade
+        client["trade_confidence"] = "high"
 
     if not client.get("zip"):
         client["zip"] = CITY_ZIP.get(str(client.get("city", "")).lower(), "85701")
@@ -217,6 +243,18 @@ def main():
     dep["demo_requested_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     dep["demo_contact"] = {"lead_id": clean(payload.get("lead_id"), 40), "name": name,
                            "email": email, "phone": phone}
+
+    # Provenance for the licensure claim on every page of this site. Without it
+    # roc_status is just a string somebody typed; with it the publish gate in
+    # backend/netlify/functions/deploy.js is checking a dated fact, and the
+    # weekly re-verify knows what it is re-checking.
+    client["roc_verified"] = {
+        "source": "azroc posting list",
+        "snapshot_date": str(roster.snapshot_date),
+        "verified_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "expiration_date": lic["expiration_date"],
+        "also_holds": lic.get("also_holds", []),
+    }
 
     # A real (non-demo) client with this ROC number already exists under any id:
     # never spin up a demo that competes with a paying customer's site.
@@ -243,7 +281,12 @@ def main():
     dest.write_text(acp.dumps(client) + "\n")
     for p in acp.validate(client):
         print(f"  {p['level'].upper():5} {p['field']}: {p['message']}", file=sys.stderr)
-    print(f"wrote {dest.relative_to(ROOT)} from {source} (trade={client['trade']})", file=sys.stderr)
+    age = roster.age_days()
+    if age > 30:
+        print(f"  WARN  roc-active list is {age} days old (snapshot {roster.snapshot_date}) — "
+              "refresh data/roc-active.csv.gz", file=sys.stderr)
+    print(f"wrote {dest.relative_to(ROOT)} from {source} "
+          f"(trade={client['trade']}, licence expires {lic['expiration_date']})", file=sys.stderr)
 
     out = os.environ.get("GITHUB_OUTPUT")
     if out:
