@@ -53,6 +53,12 @@ jobs:
           ./scripts/sync_core.sh
           git diff --exit-code backend/lib || { echo "::error::backend/lib is out of sync with core/ — run scripts/sync_core.sh and commit"; exit 1; }
 
+      # The admin console gates on the JS copy of the licence check and the
+      # build gates on the Python one. If they drift, the console accepts a
+      # contractor the build then refuses.
+      - name: ROC gate parity (python ↔ js)
+        run: python3 core/test_parity_roc.py
+
       - name: Demo request -> client.json
         id: demo
         if: github.event_name == 'repository_dispatch'

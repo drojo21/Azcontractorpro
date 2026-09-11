@@ -15,3 +15,9 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# The intake function ships the ROC active-list index (2.4 MB) alongside its
+# code. esbuild bundles JS, not data, so it has to be named explicitly or the
+# licence gate has nothing to check against at runtime.
+[functions."intake"]
+  included_files = ["lib/roc-index.json.gz"]
