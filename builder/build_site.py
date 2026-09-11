@@ -227,9 +227,18 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
         # Relative-root links work on Netlify previews and custom domains alike.
         return path if full else ("/" + path.lstrip("/#") if path.startswith("#") else path)
 
+    # The reviews page has nothing to show without either the client's own reviews
+    # or a Place ID to collect them with: it would be a heading over an empty
+    # section, reached from a nav link that promises content. Drop the page and
+    # its nav entry together — it comes back on its own once either exists.
+    has_reviews = bool(c.get("reviews") or c["integrations"].get("google_place_id"))
+
     if full:
         nav = [("Home", "/"), ("Services", "/services/"), ("About", "/about/"),
-               ("Gallery", "/gallery/"), ("Reviews", "/reviews/"), ("FAQ", "/faq/"), ("Contact", "/#quote")]
+               ("Gallery", "/gallery/")]
+        if has_reviews:
+            nav.append(("Reviews", "/reviews/"))
+        nav += [("FAQ", "/faq/"), ("Contact", "/#quote")]
     else:
         nav = [("Services", "#services"), ("About", "#about"), ("Gallery", "#gallery"),
                ("Reviews", "#reviews"), ("FAQ", "#faq"), ("Contact", "#quote")]
@@ -290,9 +299,10 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
         add("gallery.html", "/gallery/", f"Project Gallery | {c['short_name']}",
             f"Recent {trade_label.lower()} projects by {c['business_name']} in {c['city']}.",
             [lb, ld_crumbs(base, [("Home", "/"), ("Gallery", "/gallery/")])])
-        add("reviews.html", "/reviews/", f"Reviews | {c['short_name']}",
-            f"Customer reviews for {c['business_name']}, {c['city']} AZ.",
-            [lb, ld_crumbs(base, [("Home", "/"), ("Reviews", "/reviews/")])])
+        if has_reviews:
+            add("reviews.html", "/reviews/", f"Reviews | {c['short_name']}",
+                f"Customer reviews for {c['business_name']}, {c['city']} AZ.",
+                [lb, ld_crumbs(base, [("Home", "/"), ("Reviews", "/reviews/")])])
         add("faq.html", "/faq/", f"FAQ | {c['short_name']}",
             f"Answers about licensing, estimates and scheduling from {c['business_name']}.",
             [lb, ld_faq(c), ld_crumbs(base, [("Home", "/"), ("FAQ", "/faq/")])])
