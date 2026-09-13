@@ -66,6 +66,26 @@ check("no key is rejected", (await intake(new Request("https://x", {
   method: "POST", body: "{}" }))).status === 401);
 check("wrong key is rejected", (await post({ rows: [] }, "nope")).status === 401);
 
+console.log("\nkey falls back to what this backend actually sets");
+{
+  // The live backend has ACP_ADMIN_KEY, not BUILDER_KEY. Reading only the latter
+  // 500s in production while the publish endpoint next to it works.
+  const savedB = process.env.BUILDER_KEY, savedA = process.env.ACP_ADMIN_KEY;
+  delete process.env.BUILDER_KEY;
+  process.env.ACP_ADMIN_KEY = "admin-key";
+  const okRes = await post({ action: "preview", rows: [{ business: "Jiancai Chen",
+    service: "Roofing", city: "Tucson", phone: "(626) 554-4892", email: "a@b.com" }] },
+    "admin-key");
+  check("ACP_ADMIN_KEY alone authenticates", okRes.status === 200, String(okRes.status));
+  const badRes = await post({ action: "preview", rows: [{ business: "x" }] }, "wrong");
+  check("a wrong key is still rejected under the fallback", badRes.status === 401);
+  delete process.env.ACP_ADMIN_KEY;
+  const noneRes = await post({ action: "preview", rows: [{ business: "x" }] }, "anything");
+  check("neither key set refuses rather than waving through", noneRes.status === 500,
+    String(noneRes.status));
+  process.env.BUILDER_KEY = savedB; process.env.ACP_ADMIN_KEY = savedA;
+}
+
 console.log("\npreview — the licence gate");
 let r = await (await post({ action: "preview", rows: [
   { business: "Silver Basin Remodeling LLC", roc: "363002", service: "Plumbing",

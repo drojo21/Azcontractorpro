@@ -39,14 +39,20 @@ variables**:
 
 | Variable | Value |
 |---|---|
-| `BUILDER_KEY` | already set — the console reuses the publish endpoint's key |
-| `GITHUB_TOKEN` | fine-grained PAT on the repo, **Contents: Read and write** |
-| `GITHUB_REPO` | `drojo21/Azcontractorpro` (default) |
-| `INTAKE_BRANCH` | `intake` (default). Must not be the repo's default branch — the function refuses otherwise |
+| `ACP_ADMIN_KEY` | **already set** — the console reads `BUILDER_KEY \|\| ACP_ADMIN_KEY`, the same chain `deploy.js` uses, so it needs no key of its own |
+| `GITHUB_TOKEN` | **the only new one.** Fine-grained PAT on the repo, **Contents: Read and write** |
+| `LEAD_SHEET_URL` | already set — used as the lead endpoint unless `APPS_SCRIPT_URL` is set |
+| `GITHUB_REPO` | optional, defaults to `drojo21/Azcontractorpro` |
+| `INTAKE_BRANCH` | optional, defaults to `intake`. Must not be the repo's default branch — the function refuses otherwise |
 | `BASE_BRANCH` | optional. The branch the intake line is cut from; defaults to the repo's real default branch, asked for via the API rather than assumed |
-| `APPS_SCRIPT_URL` | the `/exec` URL, written into each record's `integrations.lead_endpoint` |
 
-Deploy the backend as usual. The console is at `https://<backend-site>/admin/`.
+**Check the deploy branch.** The Netlify project builds from its production branch, which is
+set independently of the repository's default. This project was pointed at `main` while the
+branch in use is `Main1`, so a merge to `Main1` published nothing. In
+**Site configuration → Build & deploy → Branches and deploy contexts**, set the production
+branch to `Main1`.
+
+Then deploy. The console is at `https://acp-backend-tucson.netlify.app/admin/`.
 
 ## Using it
 
@@ -124,7 +130,7 @@ precedence, collisions, one-commit batching, and the refusal to commit to the de
 
 ## Access
 
-The console is gated by `BUILDER_KEY` — one shared secret, the same one the publish endpoint
+The console is gated by `ACP_ADMIN_KEY` — one shared secret, the same one the publish endpoint
 uses, held in `sessionStorage` for the tab. That is a deliberate match to what already exists
 rather than a considered access model: there are no individual accounts, no audit of who added
 what, and anyone with the key can commit to the review branch. It is adequate for one or two

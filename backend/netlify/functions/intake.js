@@ -25,11 +25,14 @@ import rocActive from "../../lib/roc-active.cjs";
  * about it rather than after a red Actions run.
  *
  * Env:
- *   BUILDER_KEY       shared secret, sent as x-builder-key (same gate as deploy.js)
+ *   ACP_ADMIN_KEY     shared secret, sent as x-builder-key — the SAME variable and the
+ *                     same fallback chain deploy.js uses (BUILDER_KEY || ACP_ADMIN_KEY),
+ *                     so the console needs no key of its own
  *   GITHUB_TOKEN      fine-grained PAT, Contents: Read and write
  *   GITHUB_REPO       owner/repo, default drojo21/Azcontractorpro
  *   INTAKE_BRANCH     branch to commit to, default "intake" — must NOT be the default branch
- *   APPS_SCRIPT_URL   lead endpoint written into each record's integrations
+ *   APPS_SCRIPT_URL   lead endpoint written into each record's integrations; falls back
+ *                     to LEAD_SHEET_URL, which this backend already sets
  *   ALLOWED_ORIGIN    CORS origin; the console is same-origin so this is a fallback
  */
 
@@ -177,7 +180,8 @@ function resolveRow(roster, raw) {
   }
 
   client.integrations = client.integrations || {};
-  const endpoint = process.env.APPS_SCRIPT_URL || "";
+  // LEAD_SHEET_URL is what this backend already calls the Apps Script /exec URL.
+  const endpoint = process.env.APPS_SCRIPT_URL || process.env.LEAD_SHEET_URL || "";
   client.integrations.lead_endpoint = endpoint;
   client.integrations.gallery_endpoint = endpoint;
   client.integrations.notification_email = email || client.integrations.notification_email || "";
@@ -280,8 +284,16 @@ export default async (req) => {
   if (req.method === "OPTIONS") return new Response("", { status: 204, headers: CORS });
   if (req.method !== "POST") return json(405, { ok: false, error: "POST only" });
 
-  const key = process.env.BUILDER_KEY;
-  if (!key) return json(500, { ok: false, error: "BUILDER_KEY is not set on the backend" });
+  // Same fallback chain as deploy.js:102 — this backend has ACP_ADMIN_KEY set,
+  // not BUILDER_KEY, so reading only the latter would 500 on the live site while
+  // the publish endpoint beside it worked fine.
+  const key = process.env.BUILDER_KEY || process.env.ACP_ADMIN_KEY;
+  if (!key) {
+    return json(500, {
+      ok: false,
+      error: "no admin key on the backend: set ACP_ADMIN_KEY (or BUILDER_KEY)",
+    });
+  }
   if (req.headers.get("x-builder-key") !== key) {
     return json(401, { ok: false, error: "bad or missing x-builder-key" });
   }
