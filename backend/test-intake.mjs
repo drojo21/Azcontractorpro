@@ -16,17 +16,20 @@ process.env.INTAKE_BRANCH = "intake";
 process.env.APPS_SCRIPT_URL = "https://script.google.com/macros/s/TEST/exec";
 
 const calls = [];
+const allCalls = [];      // never cleared — the base-branch lookup is cached after the first
 let existingPaths = new Set();
 
 globalThis.fetch = async (url, opts = {}) => {
   const u = String(url);
   const method = opts.method || "GET";
-  calls.push({ method, url: u.replace("https://api.github.com", "") });
+  const entry = { method, url: u.replace("https://api.github.com", "") };
+  calls.push(entry); allCalls.push(entry);
   const ok = (obj, status = 200) =>
     new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json" } });
   const notFound = () =>
     new Response(JSON.stringify({ message: "Not Found" }), { status: 404 });
 
+  if (/\/repos\/[^/]+\/[^/]+$/.test(u)) return ok({ default_branch: "Main1" });
   if (u.includes("/contents/")) {
     const m = u.match(/\/contents\/(.+?)\?ref=/);
     return existingPaths.has(decodeURIComponent(m[1])) ? ok({ sha: "abc" }) : notFound();
@@ -135,13 +138,31 @@ check("no write to main",
 check("compare url points at the review diff",
   (r.compare_url || "").includes("compare/main...intake"), r.compare_url);
 
-console.log("\nrefusing to commit to the default branch");
-process.env.INTAKE_BRANCH = "main";
-const toMain = await post({ action: "commit", rows: [
-  { business: "Jiancai Chen", service: "Roofing", city: "Tucson",
-    phone: "(626) 554-4892", email: "a@b.com" }] });
-check("INTAKE_BRANCH=main is refused", toMain.status === 500, String(toMain.status));
+console.log("\nrefusing to commit to a protected branch");
+const row = [{ business: "Jiancai Chen", service: "Roofing", city: "Tucson",
+               phone: "(626) 554-4892", email: "a@b.com" }];
+for (const [b, why] of [["main", "the literal name main"],
+                        ["Main1", "this repo's ACTUAL default branch"],
+                        ["main1", "the default branch in the wrong case"],
+                        ["master", "master"]]) {
+  process.env.INTAKE_BRANCH = b;
+  const res = await post({ action: "commit", rows: row });
+  check(`INTAKE_BRANCH=${b} refused (${why})`, res.status === 500, String(res.status));
+}
 process.env.INTAKE_BRANCH = "intake";
+
+console.log("\nthe intake branch is cut from the real default, not \"main\"");
+calls.length = 0;
+await post({ action: "commit", rows: row });
+const cutFrom = calls.filter((c) => c.url.includes("/git/ref/heads/"));
+check("base branch was resolved from the repo, not assumed",
+  allCalls.some((c) => /\/repos\/[^/]+\/[^/]+$/.test(c.url)));
+check("resolved once and cached, not per request",
+  allCalls.filter((c) => /\/repos\/[^/]+\/[^/]+$/.test(c.url)).length === 1,
+  String(allCalls.filter((c) => /\/repos\/[^/]+\/[^/]+$/.test(c.url)).length));
+check("never asked for heads/main",
+  !cutFrom.some((c) => c.url.endsWith("/git/ref/heads/main")),
+  JSON.stringify(cutFrom.map((c) => c.url)));
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

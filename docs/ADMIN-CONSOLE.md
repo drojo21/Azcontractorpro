@@ -17,12 +17,20 @@ intake.js  ──  preview   resolve against the ROC active list, build the reco
                     you review the diff and merge
                               │
                               ▼
-              deploy.yml on main → build → publish
+                    build → publish  (see the note below
+                    about deploy.yml's branch filter)
 ```
 
 **Nothing here publishes.** The console writes `clients/<id>/client.json` to a review branch.
-Merging that branch is what wakes the existing deploy workflow. That separation is the point:
-the licence claim on a generated site is not something to ship by accident.
+Merging that branch is what ships the records. That separation is the point: the licence claim
+on a generated site is not something to ship by accident.
+
+> **This repo's default branch is `Main1`, not `main`** — and a stale `main` still exists,
+> 7 commits divergent. The console asks GitHub for the real default rather than assuming, so
+> the intake branch is cut from the right line and the "already exists" check looks at the
+> right place. Branch names are case-sensitive on GitHub, so `main` and `Main1` are genuinely
+> different branches, and guessing wrong is not something you would notice until a merge
+> reverted work.
 
 ## Setup
 
@@ -34,7 +42,8 @@ variables**:
 | `BUILDER_KEY` | already set — the console reuses the publish endpoint's key |
 | `GITHUB_TOKEN` | fine-grained PAT on the repo, **Contents: Read and write** |
 | `GITHUB_REPO` | `drojo21/Azcontractorpro` (default) |
-| `INTAKE_BRANCH` | `intake` (default). Must not be `main` — the function refuses to start otherwise |
+| `INTAKE_BRANCH` | `intake` (default). Must not be the repo's default branch — the function refuses otherwise |
+| `BASE_BRANCH` | optional. The branch the intake line is cut from; defaults to the repo's real default branch, asked for via the API rather than assumed |
 | `APPS_SCRIPT_URL` | the `/exec` URL, written into each record's `integrations.lead_endpoint` |
 
 Deploy the backend as usual. The console is at `https://<backend-site>/admin/`.
@@ -121,3 +130,27 @@ rather than a considered access model: there are no individual accounts, no audi
 what, and anyone with the key can commit to the review branch. It is adequate for one or two
 operators and a review step before anything publishes. If more people need it, or you want to
 know who added a record, that wants real auth (Netlify Identity) before it wants more features.
+
+
+## One thing to check before relying on this
+
+`deploy.yml` triggers on `push` to **`main`**, but this repository's default branch is
+**`Main1`**. Branch names are case-sensitive, so pushes to `Main1` do not match that filter and
+the deploy workflow does not fire on them — which is consistent with the automated
+`chore: record deploy results` commits appearing on `Main1` from manual `workflow_dispatch`
+runs rather than from merges.
+
+That predates the console and is not something it changes: the console commits to a review
+branch either way. But it does mean merging the review branch will not, on its own, build and
+publish anything until the trigger and the default branch agree. Either point the filter at
+`Main1`:
+
+```yaml
+on:
+  push:
+    branches: [Main1]
+```
+
+or rename the default branch to `main` and retire the stale one. Which is right depends on
+which name you want to keep — worth deciding deliberately rather than by whichever branch
+happens to get pushed to next.

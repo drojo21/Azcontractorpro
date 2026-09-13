@@ -40,6 +40,25 @@ const GH = "https://api.github.com";
 const DEFAULT_REPO = "drojo21/Azcontractorpro";
 const DEFAULT_BRANCH = "intake";
 
+/**
+ * The repository's default branch, asked for rather than assumed.
+ *
+ * This repo's default is `Main1`, not `main` — and `main` still exists as a
+ * stale side branch. Hardcoding "main" would cut the intake branch from a line
+ * that is 37 commits behind, so merging the result could revert work, and the
+ * "does this client already exist" check would miss every record that lives
+ * only on the real default. Branch names are case-sensitive on GitHub, so
+ * guessing is not recoverable either.
+ */
+let _baseBranch = null;
+async function baseBranch(repo) {
+  if (process.env.BASE_BRANCH) return process.env.BASE_BRANCH;
+  if (_baseBranch) return _baseBranch;
+  const info = await gh(`/repos/${repo}`);
+  _baseBranch = info.default_branch;
+  return _baseBranch;
+}
+
 const CORS = {
   "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN || "*",
   "Access-Control-Allow-Headers": "Content-Type, x-builder-key",
@@ -196,9 +215,9 @@ function resolveRow(roster, raw) {
   };
 }
 
-/** Does clients/<id>/client.json already exist on the branch (or on main)? */
-async function existsInRepo(repo, branch, clientId) {
-  for (const ref of [branch, "main"]) {
+/** Does clients/<id>/client.json already exist on the intake branch or the base? */
+async function existsInRepo(repo, branch, base, clientId) {
+  for (const ref of [branch, base]) {
     try {
       await gh(`/repos/${repo}/contents/clients/${encodeURIComponent(clientId)}` +
                `/client.json?ref=${encodeURIComponent(ref)}`);
@@ -217,16 +236,16 @@ async function existsInRepo(repo, branch, clientId) {
  * commits and N chances to half-finish. The git data API builds a tree and
  * commits it once, so a batch either lands whole or not at all.
  */
-async function commitAll(repo, branch, files, message) {
+async function commitAll(repo, branch, base, files, message) {
   let baseSha;
   try {
     const ref = await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
     baseSha = ref.object.sha;
   } catch (err) {
     if (err.status !== 404) throw err;
-    // First use: branch the intake line off main rather than committing to it.
-    const main = await gh(`/repos/${repo}/git/ref/heads/main`);
-    baseSha = main.object.sha;
+    // First use: cut the intake line off the base branch rather than committing to it.
+    const from = await gh(`/repos/${repo}/git/ref/heads/${encodeURIComponent(base)}`);
+    baseSha = from.object.sha;
     await gh(`/repos/${repo}/git/refs`, {
       method: "POST",
       body: JSON.stringify({ ref: `refs/heads/${branch}`, sha: baseSha }),
@@ -281,11 +300,25 @@ export default async (req) => {
 
   const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
   const branch = process.env.INTAKE_BRANCH || DEFAULT_BRANCH;
-  if (branch === "main" || branch === "master") {
+
+  let base;
+  try {
+    base = await baseBranch(repo);
+  } catch (err) {
+    return json(502, { ok: false, error: `could not resolve the base branch: ${err.message}` });
+  }
+
+  // Comparing against the repo's ACTUAL default, not the name "main". This
+  // repo's default is `Main1`, so a main/master-only guard would wave through
+  // exactly the branch it exists to protect.
+  const protectedBranch = [base, "main", "master"]
+    .some((b) => b.toLowerCase() === branch.toLowerCase());
+  if (protectedBranch) {
     return json(500, {
       ok: false,
-      error: `INTAKE_BRANCH is "${branch}" — the console must not commit to the ` +
-             "default branch, because that publishes. Point it at a review branch.",
+      error: `INTAKE_BRANCH is "${branch}", which is the default branch (or a ` +
+             `release branch). The console must not commit there, because merging ` +
+             `is what publishes. Point it at a review branch.`,
     });
   }
 
@@ -308,7 +341,7 @@ export default async (req) => {
   for (const r of results) {
     if (r.status !== "ready") continue;
     try {
-      const where = await existsInRepo(repo, branch, r.client_id);
+      const where = await existsInRepo(repo, branch, base, r.client_id);
       if (where) {
         r.exists_on = where;
         if (!body.overwrite) {
@@ -352,7 +385,7 @@ export default async (req) => {
     : `Add ${ready.length} contractors via admin console`;
 
   try {
-    const commit = await commitAll(repo, branch, files, message);
+    const commit = await commitAll(repo, branch, base, files, message);
     return json(200, {
       ok: true,
       action,
