@@ -25,12 +25,12 @@ intake.js  ──  preview   resolve against the ROC active list, build the reco
 Merging that branch is what ships the records. That separation is the point: the licence claim
 on a generated site is not something to ship by accident.
 
-> **This repo's default branch is `Main1`, not `main`** — and a stale `main` still exists,
-> 7 commits divergent. The console asks GitHub for the real default rather than assuming, so
-> the intake branch is cut from the right line and the "already exists" check looks at the
-> right place. Branch names are case-sensitive on GitHub, so `main` and `Main1` are genuinely
-> different branches, and guessing wrong is not something you would notice until a merge
-> reverted work.
+> **This repo's default branch is `Main1`, not `main`.** A stale `main` still exists, 7 commits
+> divergent, and is not the one in use. The console asks GitHub for the real default rather than
+> assuming, so the intake branch is cut from the right line, the "already exists" check looks in
+> the right place, and the review link diffs against the right branch. Branch names are
+> case-sensitive on GitHub, so `main` and `Main1` are genuinely different branches, and guessing
+> wrong is not something you would notice until a merge reverted work.
 
 ## Setup
 
@@ -75,7 +75,7 @@ Every row is checked and shown with its status before anything is written:
 | `error` | something broke; the reason has the detail |
 
 Untick any row you do not want. **Commit selected** writes them in a single commit and links
-you to both the commit and the diff against `main`.
+you to both the commit and the diff against the default branch.
 
 ## What it will not do
 
@@ -120,7 +120,7 @@ stubbed, so commits go nowhere. `DEV_REAL_GITHUB=1` with a token talks to GitHub
 and then a commit really does write to the repo.
 
 `node backend/test-intake.mjs` runs the function's own tests (auth, the gate, registrar
-precedence, collisions, one-commit batching, and the refusal to commit to `main`).
+precedence, collisions, one-commit batching, and the refusal to commit to the default branch).
 
 ## Access
 
@@ -132,18 +132,10 @@ operators and a review step before anything publishes. If more people need it, o
 know who added a record, that wants real auth (Netlify Identity) before it wants more features.
 
 
-## One thing to check before relying on this
+## Branches
 
-`deploy.yml` triggers on `push` to **`main`**, but this repository's default branch is
-**`Main1`**. Branch names are case-sensitive, so pushes to `Main1` do not match that filter and
-the deploy workflow does not fire on them — which is consistent with the automated
-`chore: record deploy results` commits appearing on `Main1` from manual `workflow_dispatch`
-runs rather than from merges.
-
-That predates the console and is not something it changes: the console commits to a review
-branch either way. But it does mean merging the review branch will not, on its own, build and
-publish anything until the trigger and the default branch agree. Either point the filter at
-`Main1`:
+`Main1` is the branch in use and the repository default. `deploy.yml` now triggers on pushes to
+it:
 
 ```yaml
 on:
@@ -151,6 +143,11 @@ on:
     branches: [Main1]
 ```
 
-or rename the default branch to `main` and retire the stale one. Which is right depends on
-which name you want to keep — worth deciding deliberately rather than by whichever branch
-happens to get pushed to next.
+Before this it filtered on `main`, which — branch names being case-sensitive — never matched a
+push here, so the workflow only ever ran by hand through `workflow_dispatch`. That is consistent
+with the automated `chore: record deploy results` commits on `Main1` coming from manual runs
+rather than from merges. Merging a review branch into `Main1` now builds and publishes on its
+own.
+
+The stale `main` is left alone: nothing points at it any more, and deleting a branch is not
+something to do as a side effect. Retire it when you are ready.

@@ -11,10 +11,10 @@ import rocActive from "../../lib/roc-active.cjs";
  *   preview   resolve every row against the ROC active list, build the record,
  *             run the schema, report what would be written. Writes nothing.
  *   commit    write the approved rows to the repo as clients/<id>/client.json,
- *             in ONE commit, on a branch that is not main.
+ *             in ONE commit, on a branch that is not the default one.
  *
  * Nothing is published from here. The commit lands on INTAKE_BRANCH (default
- * "intake"); merging it to main is what wakes the existing deploy workflow. The
+ * "intake"); merging it to the default branch is what wakes the deploy workflow. The
  * irreversible step stays a human one — which is the whole reason preview and
  * commit are separate calls rather than a flag.
  *
@@ -28,7 +28,7 @@ import rocActive from "../../lib/roc-active.cjs";
  *   BUILDER_KEY       shared secret, sent as x-builder-key (same gate as deploy.js)
  *   GITHUB_TOKEN      fine-grained PAT, Contents: Read and write
  *   GITHUB_REPO       owner/repo, default drojo21/Azcontractorpro
- *   INTAKE_BRANCH     branch to commit to, default "intake" — must NOT be main
+ *   INTAKE_BRANCH     branch to commit to, default "intake" — must NOT be the default branch
  *   APPS_SCRIPT_URL   lead endpoint written into each record's integrations
  *   ALLOWED_ORIGIN    CORS origin; the console is same-origin so this is a fallback
  */
@@ -393,7 +393,8 @@ export default async (req) => {
       committed: ready.map((r) => r.client_id),
       commit_sha: commit.sha,
       commit_url: `https://github.com/${repo}/commit/${commit.sha}`,
-      compare_url: `https://github.com/${repo}/compare/main...${branch}`,
+      compare_url:
+        `https://github.com/${repo}/compare/${encodeURIComponent(base)}...${encodeURIComponent(branch)}`,
       results,
     });
   } catch (err) {

@@ -135,8 +135,8 @@ check("ref updated is the intake branch",
   calls.some((c) => c.method === "PATCH" && c.url.includes("/git/refs/heads/intake")));
 check("no write to main",
   !calls.some((c) => c.method === "PATCH" && c.url.includes("heads/main")));
-check("compare url points at the review diff",
-  (r.compare_url || "").includes("compare/main...intake"), r.compare_url);
+check("compare url diffs against the REAL base, not the stale main",
+  (r.compare_url || "").includes("compare/Main1...intake"), r.compare_url);
 
 console.log("\nrefusing to commit to a protected branch");
 const row = [{ business: "Jiancai Chen", service: "Roofing", city: "Tucson",

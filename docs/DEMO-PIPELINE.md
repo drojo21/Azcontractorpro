@@ -45,7 +45,7 @@ Typical latency: form → email in about 2–3 minutes (Actions spin-up + Netlif
 
 ### 2. GitHub
 
-1. Push this branch / merge to `main`.
+1. Push this branch / merge to `Main1` (the default branch — `deploy.yml` triggers on it).
 2. **Settings → Secrets and variables → Actions**: add `APPS_SCRIPT_SECRET` = the same value as `DEMO_SECRET` above. (`BUILDER_KEY` and `GOOGLE_SERVICE_ACCOUNT_JSON` already exist.)
 3. The workflow already has `permissions: contents: write`; nothing else to enable.
 
