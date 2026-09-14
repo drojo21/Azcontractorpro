@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Contractor intake — AZ Contractor Pro</title>
+<style>
+  :root{
+    --ink:#16181C; --ink-2:#24282E; --line:#D8DBE0; --muted:#5C6068;
+    --bg:#EEF0F3; --card:#FFFFFF; --amber:#F2A900; --ok:#1B7F4B; --bad:#B3261E;
+    --warn:#8A5F00;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;
+         align-items:center;gap:14px;flex-wrap:wrap}
+  header b{font-size:16px;letter-spacing:.02em}
+  header .tag{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--amber);
+              font-weight:700}
+  header .spacer{flex:1}
+  .snap{font-size:12px;color:#A9AEB7}
+  .snap.stale{color:var(--amber);font-weight:700}
+  main{max-width:1100px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+        padding:18px;margin-bottom:18px}
+  h2{font-size:17px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+  label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;
+        letter-spacing:.02em}
+  label .hint{font-weight:400;font-size:11px;color:var(--muted);line-height:1.35}
+  input,select{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:6px;
+               background:#fff;color:var(--ink);width:100%}
+  input:focus,select:focus{outline:2px solid var(--amber);outline-offset:-1px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  td.nw{white-space:nowrap}
+  .btn{font:inherit;font-weight:700;border:0;border-radius:6px;padding:11px 18px;
+       cursor:pointer;background:var(--ink);color:#fff}
+  .btn.amber{background:var(--amber);color:var(--ink)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+  #drop{border:2px dashed var(--line);border-radius:10px;padding:26px;text-align:center;
+        color:var(--muted);cursor:pointer;background:#FAFBFC}
+  #drop.over{border-color:var(--amber);background:#FFF8E8;color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  .scroll{overflow-x:auto}
+  th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+     white-space:nowrap}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;
+        white-space:nowrap}
+  .pill.ready{background:#E3F3EA;color:var(--ok)}
+  .pill.refused{background:#FBE7E6;color:var(--bad)}
+  .pill.exists{background:#FFF3D6;color:var(--warn)}
+  .pill.invalid{background:#FBE7E6;color:var(--bad)}
+  .pill.error{background:#FBE7E6;color:var(--bad)}
+  .why{color:var(--muted);font-size:12px;max-width:46ch}
+  .note{padding:11px 13px;border-radius:8px;font-size:13px;margin-bottom:14px}
+  .note.bad{background:#FBE7E6;color:#7A1C16}
+  .note.ok{background:#E3F3EA;color:#0F5031}
+  .note.info{background:#FFF3D6;color:#6B4A00}
+  .hide{display:none}
+  code{background:#F2F3F5;padding:1px 5px;border-radius:4px;font-size:12px}
+  .tabs{display:flex;gap:6px;margin-bottom:16px}
+  .tab{padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:700;font-size:13px;
+       border:1px solid var(--line);background:#fff}
+  .tab[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:10px 20px 30px}
+</style>
+</head>
+<body>
+
+<header>
+  <div><div class="tag">AZ Contractor Pro</div><b>Contractor intake</b></div>
+  <div class="spacer"></div>
+  <div class="snap" id="snap"></div>
+  <button class="btn ghost" id="forget" style="background:#2A2E35;color:#fff;border:0;
+          padding:7px 12px;font-size:12px">Sign out</button>
+</header>
+
+<main>
+  <div id="gate" class="card">
+    <h2>Builder key</h2>
+    <p class="sub">Same <code>x-builder-key</code> the publish endpoint uses. Held in this tab only.</p>
+    <div class="grid" style="grid-template-columns:1fr auto;align-items:end">
+      <label>Key<input type="password" id="key" autocomplete="current-password"></label>
+      <button class="btn amber" id="unlock">Unlock</button>
+    </div>
+    <div id="gateMsg"></div>
+  </div>
+
+  <div id="app" class="hide">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tabOne" aria-selected="true">Add one</button>
+      <button class="tab" role="tab" id="tabCsv" aria-selected="false">Drop a CSV</button>
+    </div>
+
+    <section class="card" id="paneOne">
+      <h2>Add a contractor</h2>
+      <p class="sub">The ROC number is checked against the registrar's active list before
+        anything is written. Leave it blank and the business name is looked up instead —
+        that only works when the name matches exactly one active licence.</p>
+      <div class="grid">
+        <label>Business name<input id="f_business" placeholder="Silver Basin Remodeling LLC"></label>
+        <label>ROC number<input id="f_roc" class="mono" inputmode="numeric" placeholder="363002"></label>
+        <label>Trade<input id="f_service" placeholder="Plumbing"></label>
+        <label>City<input id="f_city" placeholder="Tucson"></label>
+        <label>Phone<input id="f_phone" placeholder="(520) 555-0100"></label>
+        <label>Email<input id="f_email" type="email" placeholder="owner@example.com"></label>
+        <label>Owner<input id="f_name" placeholder="Jeremy Silver"></label>
+        <label>Tier
+          <select id="f_tier"><option value="lite">lite — one page</option>
+          <option value="full">full — multi-page</option></select>
+        </label>
+        <label>Website
+          <input id="f_site_url" placeholder="https://theirdomain.com">
+          <span class="hint">Required for tier=full — the schema will not accept a
+            paying client without their own domain.</span>
+        </label>
+      </div>
+      <div class="row">
+        <button class="btn amber" id="previewOne">Check licence &amp; preview</button>
+        <label style="flex-direction:row;align-items:center;gap:7px;font-weight:400;font-size:13px">
+          <input type="checkbox" id="overwriteOne" style="width:auto"> replace an existing record
+        </label>
+      </div>
+    </section>
+
+    <section class="card hide" id="paneCsv">
+      <h2>Drop a CSV</h2>
+      <p class="sub">Needs a header row. Recognised columns:
+        <code>business</code> <code>roc</code> <code>trade</code> <code>city</code>
+        <code>phone</code> <code>email</code> <code>owner</code> <code>tier</code>
+        <code>site_url</code>
+        — plus the usual aliases (<code>business_name</code>, <code>roc_number</code>,
+        <code>service</code>, <code>name</code>). Anything else is ignored.</p>
+      <div id="drop">Drop a .csv here, or click to choose
+        <input type="file" id="file" accept=".csv,text/csv" class="hide"></div>
+      <div class="row">
+        <button class="btn amber" id="previewCsv" disabled>Check licences &amp; preview</button>
+        <label style="flex-direction:row;align-items:center;gap:7px;font-weight:400;font-size:13px">
+          <input type="checkbox" id="overwriteCsv" style="width:auto"> replace existing records
+        </label>
+        <span class="sub" id="csvInfo" style="margin:0"></span>
+      </div>
+    </section>
+
+    <section class="card hide" id="paneResults">
+      <h2>Preview</h2>
+      <p class="sub" id="resultSummary"></p>
+      <div id="resultNote"></div>
+      <div class="scroll"><table id="resultTable">
+        <thead><tr>
+          <th></th><th>Status</th><th>Business</th><th>ROC</th><th>Class</th>
+          <th>City</th><th>Expires</th><th>Client id</th><th>Why</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <div class="row">
+        <button class="btn amber" id="commit">Commit selected</button>
+        <span class="sub" id="commitHint" style="margin:0"></span>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>Nothing here publishes. Records are committed to a review branch; merging that
+branch to <code>main</code> is what builds and publishes.</footer>
+
+<script>
+const API = "/.netlify/functions/intake";
+const $ = (id) => document.getElementById(id);
+let KEY = sessionStorage.getItem("acp_builder_key") || "";
+let LAST = null;          // last preview response
+let CSVROWS = null;
+
+/* ---------------------------------------------------------------- CSV parse */
+/* Quoted fields can contain commas, newlines and doubled quotes; a split(",")
+   parser mangles exactly the rows that matter (business names with a comma). */
+function parseCSV(text) {
+  const rows = []; let row = [], field = "", q = false;
+  text = text.replace(/^﻿/, "").replace(/\r\n?/g, "\n");
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) {
+      if (ch === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+      else field += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ",") { row.push(field); field = ""; }
+    else if (ch === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+    else field += ch;
+  }
+  if (field !== "" || row.length) { row.push(field); rows.push(row); }
+  return rows.filter((r) => r.some((c) => String(c).trim() !== ""));
+}
+
+const ALIASES = {
+  business: ["business", "business_name", "company", "company_name", "name_of_business", "dba"],
+  roc:      ["roc", "roc_number", "license", "license_no", "license_number", "licence"],
+  service:  ["service", "trade", "type", "category"],
+  city:     ["city", "town"],
+  phone:    ["phone", "telephone", "phone_number", "mobile"],
+  email:    ["email", "e_mail", "email_address"],
+  name:     ["name", "owner", "owner_name", "contact", "qualifying_party"],
+  tier:     ["tier", "plan"],
+  site_url: ["site_url", "website", "website_url", "url", "domain"],
+};
+
+function mapHeaders(header) {
+  const norm = header.map((h) => String(h).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_"));
+  const out = {};
+  for (const [field, names] of Object.entries(ALIASES)) {
+    // "business_name" must not be claimed by `name` — longest alias wins.
+    let best = -1, bestLen = -1;
+    norm.forEach((h, i) => {
+      for (const n of names) if (h === n && n.length > bestLen) { best = i; bestLen = n.length; }
+    });
+    if (best >= 0) out[field] = best;
+  }
+  return out;
+}
+
+function rowsFromCSV(text) {
+  const grid = parseCSV(text);
+  if (grid.length < 2) throw new Error("needs a header row and at least one data row");
+  const map = mapHeaders(grid[0]);
+  if (map.business === undefined && map.roc === undefined) {
+    throw new Error("no business or ROC column found — header was: " + grid[0].join(", "));
+  }
+  return grid.slice(1).map((r) => {
+    const o = {};
+    for (const [f, i] of Object.entries(map)) o[f] = (r[i] || "").trim();
+    return o;
+  });
+}
+
+/* -------------------------------------------------------------------- calls */
+async function call(body) {
+  const res = await fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-builder-key": KEY },
+    body: JSON.stringify(body),
+  });
+  let data;
+  try { data = await res.json(); } catch { data = { ok: false, error: "bad response from server" }; }
+  if (res.status === 401) { lock("That key was rejected."); throw new Error("unauthorised"); }
+  return data;
+}
+
+function note(el, kind, html) { el.innerHTML = `<div class="note ${kind}">${html}</div>`; }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"]/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+function lock(msg) {
+  KEY = ""; sessionStorage.removeItem("acp_builder_key");
+  $("app").classList.add("hide"); $("gate").classList.remove("hide");
+  if (msg) note($("gateMsg"), "bad", esc(msg));
+}
+function unlock() {
+  $("gate").classList.add("hide"); $("app").classList.remove("hide");
+}
+
+/* ------------------------------------------------------------------ results */
+function showResults(data) {
+  LAST = data;
+  $("paneResults").classList.remove("hide");
+  const tb = $("resultTable").querySelector("tbody");
+  tb.innerHTML = "";
+  const counts = {};
+  data.results.forEach((r) => { counts[r.status] = (counts[r.status] || 0) + 1; });
+
+  data.results.forEach((r) => {
+    const lic = r.licence || {};
+    const tr = document.createElement("tr");
+    const selectable = r.status === "ready";
+    tr.innerHTML =
+      `<td>${selectable ? `<input type="checkbox" data-i="${r.index}" checked style="width:auto">` : ""}</td>` +
+      `<td><span class="pill ${esc(r.status)}">${esc(r.status)}</span></td>` +
+      `<td>${esc(lic.business_name || r.input.business || "—")}</td>` +
+      `<td class="mono nw">${esc(lic.roc_number || r.input.roc || "—")}</td>` +
+      `<td>${esc(lic.license_class || "—")}${lic.also_holds && lic.also_holds.length
+        ? ` <span class="sub">+${lic.also_holds.length}</span>` : ""}</td>` +
+      `<td>${esc(lic.city || "—")}</td>` +
+      `<td class="nw">${esc(lic.expiration_date || "—")}</td>` +
+      `<td class="mono">${esc(r.client_id || "—")}</td>` +
+      `<td class="why">${esc(r.reason || "")}</td>`;
+    tb.appendChild(tr);
+  });
+
+  const ready = counts.ready || 0;
+  $("resultSummary").textContent =
+    `${data.results.length} row(s): ` +
+    Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(", ") +
+    ` · checked against the ${data.snapshot_date} active list (${data.licences.toLocaleString()} licences)`;
+  $("commit").disabled = ready === 0;
+  $("commitHint").textContent = ready
+    ? `writes ${ready} record(s) to ${data.repo} on branch "${data.branch}"`
+    : "nothing here can be committed";
+  $("resultNote").innerHTML = "";
+  if (data.snapshot_age_days > 30) {
+    note($("resultNote"), "info",
+      `The ROC list is <b>${data.snapshot_age_days} days old</b> (${esc(data.snapshot_date)}). ` +
+      `Refresh <code>data/roc-active.csv.gz</code> before trusting a clean result.`);
+  }
+  $("paneResults").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function selectedRows() {
+  const want = new Set([...$("resultTable").querySelectorAll("input[type=checkbox]:checked")]
+    .map((c) => Number(c.dataset.i)));
+  return LAST.results.filter((r) => want.has(r.index)).map((r) => r.input);
+}
+
+/* -------------------------------------------------------------------- wiring */
+$("unlock").onclick = async () => {
+  const v = $("key").value.trim();
+  if (!v) return;
+  KEY = v;
+  const data = await call({ action: "preview", rows: [{ business: "", roc: "" }] })
+    .catch(() => null);
+  if (!data) return;
+  sessionStorage.setItem("acp_builder_key", KEY);
+  $("key").value = ""; $("gateMsg").innerHTML = "";
+  unlock(); showSnapshot(data);
+};
+$("forget").onclick = () => lock("");
+
+function showSnapshot(data) {
+  if (!data || !data.snapshot_date) return;
+  const el = $("snap");
+  el.textContent = `ROC list ${data.snapshot_date} · ${data.snapshot_age_days}d old · ` +
+                   `${(data.licences || 0).toLocaleString()} active`;
+  el.classList.toggle("stale", data.snapshot_age_days > 30);
+}
+
+$("tabOne").onclick = () => {
+  $("tabOne").setAttribute("aria-selected", "true");
+  $("tabCsv").setAttribute("aria-selected", "false");
+  $("paneOne").classList.remove("hide"); $("paneCsv").classList.add("hide");
+};
+$("tabCsv").onclick = () => {
+  $("tabCsv").setAttribute("aria-selected", "true");
+  $("tabOne").setAttribute("aria-selected", "false");
+  $("paneCsv").classList.remove("hide"); $("paneOne").classList.add("hide");
+};
+
+$("previewOne").onclick = async () => {
+  const row = {
+    business: $("f_business").value, roc: $("f_roc").value, service: $("f_service").value,
+    city: $("f_city").value, phone: $("f_phone").value, email: $("f_email").value,
+    name: $("f_name").value, tier: $("f_tier").value,
+    site_url: $("f_site_url").value,
+  };
+  $("previewOne").disabled = true;
+  try {
+    const data = await call({ action: "preview", rows: [row], overwrite: $("overwriteOne").checked });
+    if (!data.ok) return note($("resultNote"), "bad", esc(data.error || "preview failed"));
+    showSnapshot(data); showResults(data);
+  } finally { $("previewOne").disabled = false; }
+};
+
+const drop = $("drop");
+drop.onclick = () => $("file").click();
+drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
+drop.ondragleave = () => drop.classList.remove("over");
+drop.ondrop = (e) => {
+  e.preventDefault(); drop.classList.remove("over");
+  if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]);
+};
+$("file").onchange = (e) => e.target.files[0] && readFile(e.target.files[0]);
+
+function readFile(f) {
+  const fr = new FileReader();
+  fr.onload = () => {
+    try {
+      CSVROWS = rowsFromCSV(fr.result);
+      $("csvInfo").textContent = `${f.name} — ${CSVROWS.length} row(s) ready to check`;
+      $("previewCsv").disabled = CSVROWS.length === 0;
+      drop.textContent = `${f.name} loaded — drop another to replace it`;
+    } catch (err) {
+      CSVROWS = null; $("previewCsv").disabled = true;
+      $("csvInfo").textContent = "";
+      note($("resultNote"), "bad", esc(String(err.message || err)));
+      $("paneResults").classList.remove("hide");
+    }
+  };
+  fr.readAsText(f);
+}
+
+$("previewCsv").onclick = async () => {
+  if (!CSVROWS) return;
+  $("previewCsv").disabled = true;
+  try {
+    const data = await call({ action: "preview", rows: CSVROWS,
+                             overwrite: $("overwriteCsv").checked });
+    if (!data.ok) return note($("resultNote"), "bad", esc(data.error || "preview failed"));
+    showSnapshot(data); showResults(data);
+  } finally { $("previewCsv").disabled = false; }
+};
+
+$("commit").onclick = async () => {
+  const rows = selectedRows();
+  if (!rows.length) return;
+  $("commit").disabled = true;
+  $("commitHint").textContent = "committing…";
+  try {
+    const over = $("overwriteCsv").checked || $("overwriteOne").checked;
+    const data = await call({ action: "commit", rows, overwrite: over });
+    if (!data.ok) {
+      note($("resultNote"), "bad", esc(data.error || "commit failed"));
+      $("commitHint").textContent = "";
+      return;
+    }
+    note($("resultNote"), "ok",
+      `Committed <b>${data.committed.length}</b> record(s) to <code>${esc(data.branch)}</code>. ` +
+      `<a href="${esc(data.commit_url)}" target="_blank" rel="noopener">View the commit</a> · ` +
+      `<a href="${esc(data.compare_url)}" target="_blank" rel="noopener">Open the diff against main</a>. ` +
+      `Nothing is published until that branch is merged.`);
+    $("commitHint").textContent = "";
+    showSnapshot(data);
+  } finally { $("commit").disabled = false; }
+};
+
+if (KEY) {
+  call({ action: "preview", rows: [{ business: "", roc: "" }] })
+    .then((d) => { unlock(); showSnapshot(d); })
+    .catch(() => lock(""));
+}
+</script>
+</body>
+</html>

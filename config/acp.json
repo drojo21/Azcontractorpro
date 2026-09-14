@@ -2,5 +2,33 @@
   "_comment": "Non-secret platform settings. Secrets go in GitHub Actions secrets / Netlify env vars, never here.",
   "apps_script_url": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJxng/exec",
   "backend_url": "https://acp-backend-tucson.netlify.app",
-  "default_tier": "lite"
+  "default_tier": "lite",
+  "sales_site_url": "https://azcontractorpro.com",
+  "square_links": {
+    "_comment": "Square payment links for the three packages. Until set, demo sites and emails link to the pricing section of the sales site.",
+    "starter": "",
+    "pro": "",
+    "kit": ""
+  },
+  "pricing": {
+    "starter": {
+      "name": "Starter",
+      "setup": "$497",
+      "monthly": "$49/mo",
+      "blurb": "This one-page site on your domain, lead form wired to your inbox."
+    },
+    "pro": {
+      "name": "Pro",
+      "setup": "$997",
+      "monthly": "$99/mo",
+      "blurb": "Service pages, service-area pages, photo gallery, reviews page, browser editor."
+    },
+    "kit": {
+      "name": "Full Marketing Kit",
+      "setup": "$1,997",
+      "monthly": "$199/mo",
+      "blurb": "Pro plus video hero, SMS lead alerts, Facebook ads, Google Business Profile setup."
+    }
+  },
+  "github_repo": "drojo21/Azcontractorpro"
 }

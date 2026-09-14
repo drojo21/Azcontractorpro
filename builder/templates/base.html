@@ -12,6 +12,7 @@
 <meta property="og:url" content="{{ page.canonical }}">
 <meta property="og:site_name" content="{{ c.business_name }}">
 <meta name="theme-color" content="{{ c.theme.primary }}">
+{% if demo %}<meta name="robots" content="noindex, nofollow">{% endif %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?{% for f in c.theme.google_fonts.split('|') %}family={{ f }}{% if not loop.last %}&{% endif %}{% endfor %}&display=swap">
@@ -170,11 +171,31 @@ footer ul{list-style:none}footer li{margin-bottom:.35rem}
 @media(prefers-reduced-motion:reduce){.marquee-track{animation:none}.marquee{overflow-x:auto}}
 /* count-up */
 .countup{font-variant-numeric:tabular-nums}
+/* demo mode — banner + keep-this-site */
+.demo-bar{background:#16181C;color:#F3F4F6;font-size:.9rem;padding:.55rem 4%;display:flex;gap:1rem;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+.demo-bar b{color:#F2A900}
+.demo-bar a{color:#F2A900;font-weight:700;border-bottom:2px solid #F2A900}
+.keep{background:#16181C;color:#F3F4F6;padding:4rem 0}
+.keep .eyebrow{color:#F2A900}
+.keep h2{color:#fff}
+.keep p.lead{color:#A9AEB7;max-width:60ch}
+.offers{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:2rem}
+.offer{background:#24282E;border:1px solid #363B43;border-radius:10px;padding:1.4rem;display:flex;flex-direction:column;gap:.6rem}
+.offer.hot{border-color:#F2A900;box-shadow:0 0 0 1px #F2A900 inset}
+.offer h3{color:#fff;margin:0;font-family:var(--display)}
+.offer .price{font-family:var(--display);font-size:1.8rem;color:#F2A900;line-height:1}
+.offer .price small{font-size:.9rem;color:#A9AEB7;font-family:var(--body);margin-left:.4rem}
+.offer p{color:#A9AEB7;font-size:.92rem;margin:0;flex:1}
+.offer .btn{background:#F2A900;color:#16181C;text-align:center;border:0}
+.offer .btn.alt{background:transparent;color:#fff;border:2px solid #363B43}
+.keep .fine{color:#7C838E;font-size:.85rem;margin-top:1.4rem}
+@media print{.demo-bar,.keep{display:none}}
 @media print{header,.mcall,.hero .ctas,footer,.burger,.gal,.lb,.totop,#progress{display:none!important}body{font-size:12pt}form{box-shadow:none;border:1px solid #000}}
 </style>
 </head>
 <body>
 <div id="progress" aria-hidden="true"></div>
+{% if demo %}<div class="demo-bar" role="note"><span><b>Demo site</b> built for {{ c.business_name }} by AZ Contractor Pro.</span><a href="#keep">Keep this site →</a></div>{% endif %}
 <header id="top">
   <div class="wrap nav">
     <a class="brand" href="{{ url('/') }}">{{ c.short_name }}<small>ROC #{{ c.roc_number }} · {{ trade_label }}</small></a>
@@ -228,6 +249,27 @@ footer ul{list-style:none}footer li{margin-bottom:.35rem}
     {% endif %}
   </div>
 </section>
+
+{% if demo %}
+<section class="keep" id="keep">
+  <div class="wrap">
+    <p class="eyebrow">Like what you see?</p>
+    <h2>Keep this site. Put it on your own domain.</h2>
+    <p class="lead">This page was built from your ROC record in a day. Pick a package and we connect your domain, wire the quote form to your phone and inbox, add your photos, and hand you a claim link so the site is yours. Cancel any time and keep the files.</p>
+    <div class="offers">
+      {% for o in offers %}
+      <div class="offer{% if o.key == 'pro' %} hot{% endif %}">
+        <h3>{{ o.name }}</h3>
+        <div class="price">{{ o.setup }}<small>setup, then {{ o.monthly }}</small></div>
+        <p>{{ o.blurb }}</p>
+        <a class="btn{% if o.key != 'pro' %} alt{% endif %}" href="{{ o.href }}" rel="noopener"{% if o.square %} target="_blank"{% endif %}>{% if o.square %}Buy {{ o.name }}{% else %}See {{ o.name }} details{% endif %}</a>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="fine">Questions first? Reply to the email that brought you here, or see everything that's included at <a href="{{ sales_site_url }}" style="color:#F2A900">{{ sales_site_url | replace('https://','') }}</a>. Not affiliated with the Arizona Registrar of Contractors.</p>
+  </div>
+</section>
+{% endif %}
 </main>
 
 <footer>

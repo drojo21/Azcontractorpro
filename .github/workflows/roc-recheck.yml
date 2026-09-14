@@ -1,0 +1,28 @@
+name: ROC re-check
+
+# Every published site claims "Licensed · Bonded · Insured" for as long as it is
+# up. That claim was checked once, on the day it shipped. This is the second
+# look: it re-verifies each published client against the current ROC posting
+# list and fails when a licence is no longer on it.
+#
+# The job does NOT refresh data/roc-active.csv.gz — it reports how old the
+# snapshot is and you replace the file. Automating the download would mean
+# trusting whatever came back; replacing it is a deliberate act.
+
+on:
+  schedule:
+    - cron: "0 15 * * 1"        # Mondays, 08:00 America/Phoenix (UTC-7, no DST)
+  workflow_dispatch:
+
+jobs:
+  recheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Re-verify published licences
+        run: python3 scripts/roc_recheck.py --expiring 45

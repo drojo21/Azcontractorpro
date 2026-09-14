@@ -227,16 +227,42 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
         # Relative-root links work on Netlify previews and custom domains alike.
         return path if full else ("/" + path.lstrip("/#") if path.startswith("#") else path)
 
+    # The reviews page has nothing to show without either the client's own reviews
+    # or a Place ID to collect them with: it would be a heading over an empty
+    # section, reached from a nav link that promises content. Drop the page and
+    # its nav entry together — it comes back on its own once either exists.
+    has_reviews = bool(c.get("reviews") or c["integrations"].get("google_place_id"))
+
     if full:
         nav = [("Home", "/"), ("Services", "/services/"), ("About", "/about/"),
-               ("Gallery", "/gallery/"), ("Reviews", "/reviews/"), ("FAQ", "/faq/"), ("Contact", "/#quote")]
+               ("Gallery", "/gallery/")]
+        if has_reviews:
+            nav.append(("Reviews", "/reviews/"))
+        nav += [("FAQ", "/faq/"), ("Contact", "/#quote")]
     else:
         nav = [("Services", "#services"), ("About", "#about"), ("Gallery", "#gallery"),
                ("Reviews", "#reviews"), ("FAQ", "#faq"), ("Contact", "#quote")]
 
     hero_bg_url = get_hero_background(c)
 
+    # Demo sites (built from a free-demo request on the sales site) carry a
+    # banner, a "keep this site" section with the three checkout buttons, and
+    # noindex so a prospect's temporary URL never competes with their real site.
+    demo = bool((c.get("deploy") or {}).get("demo"))
+    square = {k: v for k, v in (cfg.get("square_links") or {}).items() if not k.startswith("_")}
+    sales = (cfg.get("sales_site_url") or "https://azcontractorpro.com").rstrip("/")
+    pricing = cfg.get("pricing") or {}
+    offers = []
+    for key in ("starter", "pro", "kit"):
+        tier_info = pricing.get(key) or {}
+        offers.append({"key": key, "name": tier_info.get("name", key.title()),
+                       "setup": tier_info.get("setup", ""), "monthly": tier_info.get("monthly", ""),
+                       "blurb": tier_info.get("blurb", ""),
+                       "href": square.get(key) or f"{sales}/#pricing",
+                       "square": bool(square.get(key))})
+
     common = dict(c=c, full=full, tel=tel(c["phone"]), trade_label=trade_label,
+                  demo=demo, offers=offers, sales_site_url=sales,
                   hours_human=hours_human(c["hours"]), roc_url=ROC_URL + c["roc_number"],
                   lead_endpoint=lead_endpoint, gallery_endpoint=gallery_endpoint,
                   lead_form_js=lead_js, favicon=favicon(c), year=date.today().year,
@@ -273,9 +299,10 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
         add("gallery.html", "/gallery/", f"Project Gallery | {c['short_name']}",
             f"Recent {trade_label.lower()} projects by {c['business_name']} in {c['city']}.",
             [lb, ld_crumbs(base, [("Home", "/"), ("Gallery", "/gallery/")])])
-        add("reviews.html", "/reviews/", f"Reviews | {c['short_name']}",
-            f"Customer reviews for {c['business_name']}, {c['city']} AZ.",
-            [lb, ld_crumbs(base, [("Home", "/"), ("Reviews", "/reviews/")])])
+        if has_reviews:
+            add("reviews.html", "/reviews/", f"Reviews | {c['short_name']}",
+                f"Customer reviews for {c['business_name']}, {c['city']} AZ.",
+                [lb, ld_crumbs(base, [("Home", "/"), ("Reviews", "/reviews/")])])
         add("faq.html", "/faq/", f"FAQ | {c['short_name']}",
             f"Answers about licensing, estimates and scheduling from {c['business_name']}.",
             [lb, ld_faq(c), ld_crumbs(base, [("Home", "/"), ("FAQ", "/faq/")])])
