@@ -1,0 +1,132 @@
+{
+  "business_name": "Creative Construction Management LLC",
+  "city": "Tucson",
+  "client_id": "creative-construction-management-llc",
+  "deploy": {
+    "claim_link_sent_at": "",
+    "claimed_at": "",
+    "custom_domain": "",
+    "last_built_at": "",
+    "last_tier_built": "",
+    "netlify_site_id": "",
+    "netlify_url": "",
+    "repo": ""
+  },
+  "email": "creativeconstruction.mngmt@gmail.com",
+  "emergency_service": false,
+  "facebook_url": "",
+  "faqs": [
+    {
+      "a": "Yes. Creative Construction Management LLC holds Arizona ROC license #355392, a KB-1 classification, and carries liability insurance. You can verify it at azroc.gov.",
+      "q": "Is Creative Construction Management LLC licensed and insured?"
+    },
+    {
+      "a": "We serve Tucson and the surrounding communities.",
+      "q": "What areas do you serve?"
+    },
+    {
+      "a": "No. Estimates are free and done on site, and you get the scope and price in writing before anyone starts work. Call (520) 756-9741 to schedule.",
+      "q": "Do you charge for estimates?"
+    },
+    {
+      "a": "We handle home additions, kitchen & bath remodels, whole-home renovation, repairs & maintenance.",
+      "q": "What general services do you offer?"
+    },
+    {
+      "a": "It depends on scope, but you get a schedule in writing with the estimate — including what happens if weather or inspections move a date.",
+      "q": "How long does a typical project take?"
+    },
+    {
+      "a": "Search ROC #355392 at azroc.gov. It takes about thirty seconds and shows license status, classification, and any complaint history.",
+      "q": "How do I verify your contractor license?"
+    }
+  ],
+  "hero_subhead": "Licensed general work in Tucson — free written estimates, and the same crew from first day to final walkthrough.",
+  "hours": "Mo-Fr 07:00-17:00, Sa 08:00-14:00",
+  "integrations": {
+    "facebook_page_id": "",
+    "gallery_endpoint": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJxng/exec",
+    "google_place_id": "",
+    "lead_endpoint": "https://script.google.com/macros/s/AKfycbyI32MuHF9ouyyhQ1qlfqQatEIgECCWbZbPxCGFXc9Whvs6oNwfw-T1NCtwOfz7jFJxng/exec",
+    "notification_email": "creativeconstruction.mngmt@gmail.com",
+    "portal_url": ""
+  },
+  "license_class": "KB-1",
+  "license_class_description": "Dual Building Contractor",
+  "marketing": {
+    "fb_interests": [
+      "Home improvement",
+      "Home renovation",
+      "Real estate",
+      "New home"
+    ],
+    "gbp_primary_category": "General Contractor",
+    "gbp_secondary_category": "Home Builder"
+  },
+  "owner": "Jesus Manuel Lopez",
+  "owner_first_name": "Jesus",
+  "payment_plans": "",
+  "phone": "(520) 756-9741",
+  "reviews": [],
+  "roc_number": "355392",
+  "roc_status": "Active",
+  "roc_verified": {
+    "added_via": "admin console",
+    "also_holds": [],
+    "expiration_date": "2026-10-31",
+    "snapshot_date": "2026-09-08",
+    "source": "azroc posting list",
+    "verified_at": "2026-09-14T01:57:18Z"
+  },
+  "schema_version": "1.0",
+  "service_area": [
+    "Tucson"
+  ],
+  "services": [
+    {
+      "name": "Home Additions",
+      "slug": "home-additions",
+      "summary": "Permitted room additions and casitas managed from plans through final inspection."
+    },
+    {
+      "name": "Kitchen & Bath Remodels",
+      "slug": "kitchen-bath",
+      "summary": "Full remodels with one crew coordinating trades instead of you chasing subs."
+    },
+    {
+      "name": "Whole-Home Renovation",
+      "slug": "whole-home-renovation",
+      "summary": "Large-scope renovations scheduled in phases so the house stays livable where possible."
+    },
+    {
+      "name": "Repairs & Maintenance",
+      "slug": "repairs-maintenance",
+      "summary": "Structural and finish repairs handled under one licensed contract."
+    }
+  ],
+  "short_name": "Creative Construction Management",
+  "site_url": "",
+  "state": "AZ",
+  "tagline": "Licensed. Local. Ready to Build.",
+  "target_customer": "both",
+  "theme": {
+    "accent": "#3b82f6",
+    "accent_dark": "#306bca",
+    "body_font": "Source Sans 3",
+    "display_font": "Inter",
+    "google_fonts": "Inter:wght@400;500;700|Source+Sans+3:wght@400;600",
+    "primary": "#1f2937",
+    "primary_dark": "#18202b",
+    "primary_light": "#47505b"
+  },
+  "tier": "lite",
+  "trade": "general",
+  "trade_confidence": "high",
+  "why_us": [
+    "Licensed, bonded, and insured — ROC #355392, verifiable at azroc.gov in about thirty seconds",
+    "Free on-site estimates, written before any work starts",
+    "The same crew from the first day to the final walkthrough"
+  ],
+  "years_in_business": null,
+  "zip": "85746"
+}
