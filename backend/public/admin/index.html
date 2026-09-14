@@ -83,8 +83,9 @@
 
 <main>
   <div id="gate" class="card">
-    <h2>Builder key</h2>
-    <p class="sub">Same <code>x-builder-key</code> the publish endpoint uses. Held in this tab only.</p>
+    <h2>Admin key</h2>
+    <p class="sub">The value of <code>ACP_ADMIN_KEY</code> in this site's Netlify environment
+      variables — the same secret the publish endpoint uses. Held in this tab only.</p>
     <div class="grid" style="grid-template-columns:1fr auto;align-items:end">
       <label>Key<input type="password" id="key" autocomplete="current-password"></label>
       <button class="btn amber" id="unlock">Unlock</button>
@@ -168,7 +169,7 @@
 </main>
 
 <footer>Nothing here publishes. Records are committed to a review branch; merging that
-branch to <code>main</code> is what builds and publishes.</footer>
+branch to <code>Main1</code> is what builds and publishes.</footer>
 
 <script>
 const API = "/.netlify/functions/intake";
