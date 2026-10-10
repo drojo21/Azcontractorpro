@@ -190,6 +190,16 @@ footer ul{list-style:none}footer li{margin-bottom:.35rem}
 .offer .btn.alt{background:transparent;color:#fff;border:2px solid #363B43}
 .keep .fine{color:#7C838E;font-size:.85rem;margin-top:1.4rem}
 @media print{.demo-bar,.keep{display:none}}
+/* make a payment */
+.pay{background:var(--bg-alt);border-top:1px solid var(--border);scroll-margin-top:90px}
+.pay .two{align-items:start}
+.pay-fine{color:var(--text-light);font-size:.9rem;margin-top:1rem}
+.pay-amt{display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;background:#fff}
+.pay-amt span{padding:0 .2rem 0 .9rem;font-weight:700;color:var(--text-light)}
+.pay-amt input{border:0;font-size:1.25rem;font-weight:700}
+.pay-amt:focus-within{outline:2px solid var(--accent)}.pay-amt input:focus{outline:0}
+.pay-methods{text-align:center;color:var(--text-light);font-size:.82rem;margin:.8rem 0 0}
+.pay-ok{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;border-radius:8px;padding:.8rem 1rem;font-weight:600;margin:0 0 .6rem}
 @media print{header,.mcall,.hero .ctas,footer,.burger,.gal,.lb,.totop,#progress{display:none!important}body{font-size:12pt}form{box-shadow:none;border:1px solid #000}}
 </style>
 </head>
@@ -250,6 +260,30 @@ footer ul{list-style:none}footer li{margin-bottom:.35rem}
   </div>
 </section>
 
+{% if pay %}
+<section class="pay" id="pay">
+  <div class="wrap two">
+    <div>
+      <p class="eyebrow">Secure online payment</p>
+      <h2>{{ pay.heading }}</h2>
+      <p>{{ pay.note }}</p>
+      <p class="pay-fine">Payments are processed by Stripe and go directly to {{ c.business_name }}. You'll get an emailed receipt. Questions about a bill? Call <a href="tel:{{ tel }}">{{ c.phone }}</a>.</p>
+    </div>
+    <form method="get" action="{{ pay.action }}" class="pay-form">
+      <input type="hidden" name="client" value="{{ c.client_id }}">
+      <p class="pay-ok" hidden data-pay-ok>✓ Payment received — thank you! A receipt is on its way to your email.</p>
+      <label for="p-amount">Amount (USD) *</label>
+      <div class="pay-amt"><span>$</span><input id="p-amount" name="amount" inputmode="decimal" placeholder="2,500.00" required pattern="[0-9,]+(\.[0-9]{1,2})?" autocomplete="off"></div>
+      <label for="p-ref">Invoice # or job address</label>
+      <input id="p-ref" name="ref" maxlength="120" placeholder="e.g. Invoice 1042 or 123 E Main St">
+      <button type="submit" class="btn btn-accent">Continue to secure payment</button>
+      <p class="pay-methods">Card · Apple Pay · Google Pay · Bank transfer (ACH)</p>
+    </form>
+  </div>
+</section>
+<script>(function(){try{if(/[?&]paid=1/.test(location.search)){var m=document.querySelector('[data-pay-ok]');if(m){m.hidden=false;}}}catch(e){}})();</script>
+{% endif %}
+
 {% if demo %}
 <section class="keep" id="keep">
   <div class="wrap">
@@ -262,7 +296,7 @@ footer ul{list-style:none}footer li{margin-bottom:.35rem}
         <h3>{{ o.name }}</h3>
         <div class="price">{{ o.setup }}<small>setup, then {{ o.monthly }}</small></div>
         <p>{{ o.blurb }}</p>
-        <a class="btn{% if o.key != 'pro' %} alt{% endif %}" href="{{ o.href }}" rel="noopener"{% if o.square %} target="_blank"{% endif %}>{% if o.square %}Buy {{ o.name }}{% else %}See {{ o.name }} details{% endif %}</a>
+        <a class="btn{% if o.key != 'pro' %} alt{% endif %}" href="{{ o.href }}" rel="noopener"{% if o.buy %} target="_blank"{% endif %}>{% if o.buy %}Get {{ o.name }}{% else %}See {{ o.name }} details{% endif %}</a>
       </div>
       {% endfor %}
     </div>

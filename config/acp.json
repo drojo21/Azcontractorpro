@@ -4,11 +4,10 @@
   "backend_url": "https://acp-backend-tucson.netlify.app",
   "default_tier": "lite",
   "sales_site_url": "https://azcontractorpro.com",
-  "square_links": {
-    "_comment": "Square payment links for the three packages. Until set, demo sites and emails link to the pricing section of the sales site.",
-    "starter": "",
-    "pro": "",
-    "kit": ""
+  "stripe": {
+    "_comment": "Buy buttons on demo sites, the sales site and demo emails go to <backend_url>/api/checkout?tier=…&client=… (Stripe Checkout: setup fee + monthly). Prices live in Stripe under lookup keys acp_<tier>_setup / acp_<tier>_monthly — change them there (backend/stripe-setup.mjs), not here. Set checkout_enabled false to fall back to the pricing section.",
+    "checkout_enabled": true,
+    "customer_portal_url": "https://billing.stripe.com/p/login/28EaEX2E97Yj8dV2OqdZ600"
   },
   "pricing": {
     "starter": {

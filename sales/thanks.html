@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>You're in — AZ Contractor Pro</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%2316181C'/%3E%3Cpath d='M12 48 L32 14 L52 48 H42 L32 30 L22 48 Z' fill='%23F2A900'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{--ink:#16181C;--muted:#5C6068;--line:#D8DBE0;--paper:#EEF0F3;--amber:#F2A900;--verify:#1E7F4F;--verify-soft:#E4F3EA;
+  --display:'Barlow Condensed',system-ui,sans-serif;--body:'Barlow',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+main{max-width:640px;margin:0 auto;padding:56px 16px 72px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--verify-soft);color:var(--verify);font-weight:600;border-radius:999px;padding:6px 14px;font-size:15px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,8vw,60px);line-height:1;margin:18px 0 12px;letter-spacing:-.01em}
+.lede{font-size:19px;color:var(--muted);margin:0 0 32px}
+ol{list-style:none;padding:0;margin:0 0 32px;display:grid;gap:12px}
+ol li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 18px 16px 60px;position:relative}
+ol li::before{counter-increment:s;content:counter(s);position:absolute;left:16px;top:16px;width:30px;height:30px;border-radius:50%;background:var(--amber);color:var(--ink);font-family:var(--display);font-weight:800;font-size:18px;display:grid;place-items:center}
+ol{counter-reset:s}
+ol b{display:block;font-weight:600}
+ol span{color:var(--muted);font-size:16px}
+.row{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-block;padding:13px 20px;border-radius:8px;font-weight:600;text-decoration:none;border:2px solid var(--ink)}
+.btn.dark{background:var(--ink);color:#fff}
+.btn.ghost{color:var(--ink)}
+.fine{color:var(--muted);font-size:15px;margin-top:28px}
+.fine a{color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+  <span class="badge">✓ Payment received</span>
+  <h1>You're in. Let's get your site live.</h1>
+  <p class="lede">Your receipt is on its way to your email. Here's what happens next.</p>
+  <ol>
+    <li><b>Daniel calls you within one business day</b><span>To confirm your services, service area and photos, and to get your domain connected.</span></li>
+    <li><b>Your site goes live on your domain</b><span>Lead form wired to your phone and inbox. You'll get the claim link that makes the site yours.</span></li>
+    <li><b>Monthly billing starts after launch</b><span>The date is on your receipt. Update your card or cancel any time from the billing link below.</span></li>
+  </ol>
+  <div class="row">
+    <a class="btn dark" href="tel:+15204613937">Call 520-461-3937</a>
+    <a class="btn ghost" href="https://billing.stripe.com/p/login/28EaEX2E97Yj8dV2OqdZ600">Manage my billing</a>
+  </div>
+  <p class="fine">Questions? Reply to your receipt email or write <a href="mailto:azcontractorpro@gmail.com">azcontractorpro@gmail.com</a>. <a href="/">Back to AZ Contractor Pro</a></p>
+</main>
+</body>
+</html>

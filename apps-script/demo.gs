@@ -12,7 +12,7 @@
  *      publishes it through the backend, commits the URL back, then posts
  *      action=demo_ready here with client_id + url + claim_url.
  *   4. handleDemoReady() matches the Demos row, emails the prospect the live
- *      link with the three Square checkout buttons, and emails you.
+ *      link with the three Stripe checkout buttons, and emails you.
  *
  * Script Properties (Project Settings -> Script properties):
  *   GITHUB_TOKEN        fine-grained PAT for the repo, permission
@@ -23,9 +23,11 @@
  *                       APPS_SCRIPT_SECRET. Without it anyone could trigger emails.
  *   SALES_CLIENT_ID     default azcontractorpro (must also be a Registry row)
  *   SALES_SITE_URL      default https://azcontractorpro.com
- *   SQUARE_LINK_STARTER, SQUARE_LINK_PRO, SQUARE_LINK_KIT
- *                       Square payment links. Empty -> buttons point at the
- *                       pricing section of the sales site instead.
+ *   BACKEND_URL         default https://acp-backend-tucson.netlify.app — the email's
+ *                       Buy buttons go to <BACKEND_URL>/api/checkout?tier=…&client=…
+ *                       (Stripe Checkout: setup fee + monthly, tied to this demo).
+ *   CHECKOUT_ENABLED    default "true"; "false" -> buttons point at the pricing
+ *                       section of the sales site instead.
  *   ADMIN_EMAIL         already used by router.gs
  */
 
@@ -190,7 +192,8 @@ function handleDemoReady(body, params) {
   var row = {};
   DEMO_COLUMNS.forEach(function (c, i) { row[c] = rows[idx][i]; });
 
-  sheet.getRange(r, demoCol('client_id')).setValue(clientId || row.client_id);
+  row.client_id = clientId || row.client_id;   // the email's Buy buttons carry it to Stripe
+  sheet.getRange(r, demoCol('client_id')).setValue(row.client_id);
   sheet.getRange(r, demoCol('demo_url')).setValue(url);
   sheet.getRange(r, demoCol('claim_url')).setValue(claimUrl);
   sheet.getRange(r, demoCol('ready_at')).setValue(nowIso());
@@ -233,16 +236,21 @@ function handleDemoReady(body, params) {
 
 /* =============================================================== the email */
 
-function squareLinks() {
+function checkoutLinks(clientId) {
   var p = props();
   var sales = salesSiteUrl();
-  function link(key) { return p.getProperty('SQUARE_LINK_' + key) || (sales + '/#pricing'); }
+  var backend = String(p.getProperty('BACKEND_URL') || 'https://acp-backend-tucson.netlify.app').replace(/\/+$/, '');
+  var on = String(p.getProperty('CHECKOUT_ENABLED') || 'true').toLowerCase() !== 'false';
+  function link(tier) {
+    if (!on) return sales + '/#pricing';
+    return backend + '/api/checkout?tier=' + tier + (clientId ? '&client=' + encodeURIComponent(clientId) : '');
+  }
   return [
-    { key: 'STARTER', name: 'Starter', setup: '$497', monthly: '$49/mo', href: link('STARTER'),
+    { key: 'starter', name: 'Starter', setup: '$497', monthly: '$49/mo', href: link('starter'),
       blurb: 'This page on your own domain, quote form wired to your inbox.' },
-    { key: 'PRO', name: 'Pro', setup: '$997', monthly: '$99/mo', href: link('PRO'),
+    { key: 'pro', name: 'Pro', setup: '$997', monthly: '$99/mo', href: link('pro'),
       blurb: 'Service pages, service-area pages, photo gallery, reviews page, edit it yourself.', hot: true },
-    { key: 'KIT', name: 'Full Marketing Kit', setup: '$1,997', monthly: '$199/mo', href: link('KIT'),
+    { key: 'kit', name: 'Full Marketing Kit', setup: '$1,997', monthly: '$199/mo', href: link('kit'),
       blurb: 'Pro plus intro video, SMS lead alerts, Facebook ads and Google Business Profile setup.' }
   ];
 }
@@ -251,9 +259,9 @@ function sendDemoEmail(row, url, claimUrl) {
   var first = String(row.name || '').split(' ')[0] || 'there';
   var biz = row.business || ('ROC #' + row.roc);
   var sales = salesSiteUrl();
-  var offers = squareLinks();
+  var offers = checkoutLinks(row.client_id);
   var admin = props().getProperty('ADMIN_EMAIL') || '';
-  var hasSquare = offers.some(function (o) { return o.href.indexOf('#pricing') === -1; });
+  var canBuy = offers.some(function (o) { return o.href.indexOf('#pricing') === -1; });
 
   function btn(o) {
     var bg = o.hot ? '#F2A900' : '#16181C';
@@ -267,7 +275,7 @@ function sendDemoEmail(row, url, claimUrl) {
       '<div style="font-size:13px;color:#5C6068;line-height:1.4;margin-bottom:14px">' + esc(o.blurb) + '</div>' +
       '<a href="' + esc(o.href) + '" style="display:inline-block;background:' + bg + ';color:' + fg +
       ';text-decoration:none;font-weight:bold;font-size:14px;padding:12px 18px;border-radius:6px">' +
-      (hasSquare ? 'Buy ' + esc(o.name) : 'See ' + esc(o.name)) + '</a>' +
+      (canBuy ? 'Get ' + esc(o.name) : 'See ' + esc(o.name)) + '</a>' +
       '</td></tr></table></td>';
   }
 

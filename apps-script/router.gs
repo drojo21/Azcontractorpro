@@ -10,6 +10,7 @@
  *   action=portal    GET    client's own leads           -> requires PIN
  *   action=claimed   POST   record a site claim          -> Claims sheet
  *   action=demo_ready POST  GitHub Actions: demo site is live -> email prospect (demo.gs)
+ *   action=stripe_event POST acp-backend stripe-webhook.js -> Payments sheet + email (stripe.gs)
  *   action=health    GET    deployment check
  *
  * A lead whose client_id is the sales site itself (SALES_CLIENT_ID, default
@@ -83,6 +84,7 @@ function handle(e, method) {
       case 'portal':  return json(handlePortal(params));
       case 'claimed': return json(handleClaimed(body, params));
       case 'demo_ready': return json(handleDemoReady(body, params));
+      case 'stripe_event': return json(handleStripeEvent(body));
       case 'health':  return json({ ok: true, version: '1.2', time: nowIso() });
       default:        return json({ ok: false, error: 'unknown action: ' + action }, 400);
     }

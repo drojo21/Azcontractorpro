@@ -249,20 +249,35 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
     # banner, a "keep this site" section with the three checkout buttons, and
     # noindex so a prospect's temporary URL never competes with their real site.
     demo = bool((c.get("deploy") or {}).get("demo"))
-    square = {k: v for k, v in (cfg.get("square_links") or {}).items() if not k.startswith("_")}
     sales = (cfg.get("sales_site_url") or "https://azcontractorpro.com").rstrip("/")
+    backend = (cfg.get("backend_url") or "").rstrip("/")
+    stripe_cfg = cfg.get("stripe") or {}
+    # Stripe Checkout through the backend. client= ties the sale to this demo, so the
+    # webhook can mark the right contractor paid. Off → buttons go to the pricing section.
+    checkout_on = bool(stripe_cfg.get("checkout_enabled") and backend)
     pricing = cfg.get("pricing") or {}
     offers = []
     for key in ("starter", "pro", "kit"):
         tier_info = pricing.get(key) or {}
+        href = (f"{backend}/api/checkout?tier={key}&client={quote(c['client_id'])}"
+                if checkout_on else f"{sales}/#pricing")
         offers.append({"key": key, "name": tier_info.get("name", key.title()),
                        "setup": tier_info.get("setup", ""), "monthly": tier_info.get("monthly", ""),
                        "blurb": tier_info.get("blurb", ""),
-                       "href": square.get(key) or f"{sales}/#pricing",
-                       "square": bool(square.get(key))})
+                       "href": href, "buy": checkout_on})
+
+    # "Make a payment" section: only once the contractor finished Stripe onboarding
+    # (connect-onboard.js) and payments.enabled is set in their client.json.
+    pay_cfg = raw.get("payments") or {}
+    pay = None
+    if pay_cfg.get("enabled") and backend:
+        pay = {"action": f"{backend}/api/pay",
+               "heading": pay_cfg.get("heading") or "Make a payment",
+               "note": pay_cfg.get("note") or "Pay a deposit or an invoice balance by card, or straight from "
+                                               "your bank account (ACH) — the easy way to handle larger jobs."}
 
     common = dict(c=c, full=full, tel=tel(c["phone"]), trade_label=trade_label,
-                  demo=demo, offers=offers, sales_site_url=sales,
+                  demo=demo, offers=offers, sales_site_url=sales, pay=pay,
                   hours_human=hours_human(c["hours"]), roc_url=ROC_URL + c["roc_number"],
                   lead_endpoint=lead_endpoint, gallery_endpoint=gallery_endpoint,
                   lead_form_js=lead_js, favicon=favicon(c), year=date.today().year,
