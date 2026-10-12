@@ -85,6 +85,16 @@ def main():
         pinned = (client.get("deploy") or {}).get("netlify_site_id")
         if pinned:
             payload["siteId"] = pinned
+        # Same reasoning as siteId, and it matters more. The claim JWT is keyed
+        # to session_id and the Netlify site was created carrying it, but
+        # deploy.js resolves it as body.sessionId -> Blobs -> a fresh random
+        # one. So a cleared Blobs store silently invents a new session, and the
+        # claim link minted against it no longer matches the live site — the
+        # contractor clicks it and gets nothing. Pin it from the repo, which is
+        # the only copy that survives Blobs.
+        pinned_session = (client.get("deploy") or {}).get("session_id")
+        if pinned_session:
+            payload["sessionId"] = pinned_session
         status, res = post(f"{backend.rstrip('/')}/api/deploy", key, payload)
         if status == 200:
             d = client.setdefault("deploy", {})
@@ -102,6 +112,18 @@ def main():
                 bad += 1
             elif returned and not pinned:
                 d["netlify_site_id"] = returned
+            # Record the session so the repo, not just Blobs, holds the one
+            # value the claim link depends on. A backend that ignored the pin
+            # means claiming is already broken for this site, so say so rather
+            # than overwriting the good value with the one that drifted.
+            returned_session = res.get("sessionId", "")
+            if pinned_session and returned_session and returned_session != pinned_session:
+                print(f"  WARN {cid}: backend used session {returned_session} but client.json "
+                      f"pins {pinned_session}. Keeping the pin; the claim link will not match "
+                      f"the live site — check before sending anything to this contractor.")
+                bad += 1
+            elif returned_session:
+                d["session_id"] = returned_session
             d.update({"netlify_url": res.get("url", ""),
                       "last_built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                       "last_tier_built": res.get("tier", client.get("tier", ""))})

@@ -320,6 +320,7 @@ class ACP:
                 "netlify_url": "",
                 "custom_domain": "",
                 "repo": "",
+                "session_id": "",
                 "claim_url": "",
                 "claim_link_sent_at": "",
                 "claimed_at": "",
