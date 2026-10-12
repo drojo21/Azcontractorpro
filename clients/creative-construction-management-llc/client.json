@@ -63,7 +63,7 @@
     "gbp_primary_category": "General Contractor",
     "gbp_secondary_category": "Home Builder"
   },
-  "owner": "Jesus Manuel Lopez",
+  "owner": "Jesus Lopez",
   "owner_first_name": "Jesus",
   "payment_plans": "",
   "phone": "(520) 756-9741",
@@ -76,7 +76,7 @@
     "expiration_date": "2026-10-31",
     "snapshot_date": "2026-09-08",
     "source": "azroc posting list",
-    "verified_at": "2026-09-14T02:03:35Z"
+    "verified_at": "2026-10-12T03:53:49Z"
   },
   "schema_version": "1.0",
   "service_area": [
@@ -105,7 +105,7 @@
     }
   ],
   "short_name": "Creative Construction Management",
-  "site_url": "",
+  "site_url": "creativeconstructionaz.com/",
   "state": "AZ",
   "tagline": "Licensed. Local. Ready to Build.",
   "target_customer": "both",
