@@ -65,7 +65,7 @@ def main():
         print("nothing to publish")
         return
 
-    ok, bad = 0, 0
+    ok, bad, no_claim = 0, 0, []
     for cid in ids:
         folder = ROOT / "dist" / cid
         cpath = ROOT / "clients" / cid / "client.json"
@@ -107,9 +107,23 @@ def main():
                       "last_tier_built": res.get("tier", client.get("tier", ""))})
             if res.get("claimUrl"):
                 d["claim_url"] = res["claimUrl"]
+            elif not d.get("claimed_at"):
+                # A 200 with no claimUrl means the backend minted no claim link
+                # (almost always: OAUTH_CLIENT_ID / OAUTH_CLIENT_SECRET unset on
+                # the function). This branch used to be a bare no-op, so the
+                # site published, "ok" printed, and the contractor got a demo
+                # they could never take ownership of. Not fatal — the site is
+                # live and the ids below still need recording — but never silent.
+                no_claim.append(cid)
+                print(f"  WARN {cid}: published with NO claim link — the contractor "
+                      f"cannot take ownership of this site")
             cpath.write_text(acp.dumps(client) + "\n")
             ok += 1
             print(f"  ok   {cid} -> {res.get('url')}  ({'reused' if res.get('reused') else 'new site'})")
+            # The backend has always returned these; nothing ever printed them.
+            for w in res.get("warnings") or []:
+                print(f"       {str(w.get('level', 'warn')).upper()}: "
+                      f"{w.get('field', '?')}: {w.get('message', '')}")
         elif status == 409:
             print(f"  hold {cid}: {res.get('error')}")  # claimed by contractor — expected
             bad += 1
@@ -117,6 +131,14 @@ def main():
             print(f"  FAIL {cid} [{status}]: {res.get('error') or res}")
             bad += 1
     print(f"\npublished {ok}, problems {bad}")
+    if no_claim:
+        # Deliberately not counted in `bad`: these sites published fine, and
+        # exiting non-zero here would skip the workflow step that commits the
+        # site ids back into clients/ — which orphans the sites on the next run.
+        print(f"\n{len(no_claim)} site(s) published with NO claim link: {', '.join(no_claim)}\n"
+              f"  Set OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET (and CLAIM_WEBHOOK) on the\n"
+              f"  backend function, then re-run — the link is derived from the stored\n"
+              f"  session_id, so nothing needs rebuilding.")
     if bad:
         sys.exit(1)
 

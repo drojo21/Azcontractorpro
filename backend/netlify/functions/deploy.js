@@ -240,11 +240,44 @@ export default async (req) => {
     if (state !== "ready") throw new Error("Timed out waiting for the CDN");
 
     /* 5 — claim link, so the contractor can take ownership */
+    //
+    // A missing claim link used to be invisible: claimUrl stayed null on an
+    // otherwise-200 response, publish.py's `if res.get("claimUrl")` skipped the
+    // write, demo_notify.py sent claim_url="", and demo.gs dropped its "Claim
+    // it here" paragraph — four silent steps ending in a demo the contractor
+    // has no way to take ownership of. The link stays optional (there is no
+    // point failing a deploy that worked), but its absence is now reported.
     let claimUrl = null;
+    const claimWarnings = [];
     if (OAUTH_CLIENT_ID && OAUTH_CLIENT_SECRET) {
       const claim = { client_id: OAUTH_CLIENT_ID, session_id: sessionId };
       if (CLAIM_WEBHOOK) claim.claim_webhook = CLAIM_WEBHOOK;
       claimUrl = `https://app.netlify.com/claim?utm_source=az-contractor-pro#${signJWT(claim, OAUTH_CLIENT_SECRET)}`;
+      if (!CLAIM_WEBHOOK) {
+        claimWarnings.push({
+          level: "warn",
+          field: "claim_webhook",
+          message:
+            "CLAIM_WEBHOOK is not set, so Netlify has nowhere to report this claim. " +
+            "The link works, but /api/claimed never fires and claimed_at stays empty.",
+        });
+      }
+    } else {
+      const missing = [
+        !OAUTH_CLIENT_ID && "OAUTH_CLIENT_ID",
+        !OAUTH_CLIENT_SECRET && "OAUTH_CLIENT_SECRET",
+      ].filter(Boolean);
+      claimWarnings.push({
+        level: "warn",
+        field: "claim_url",
+        message:
+          `No claim link minted: ${missing.join(" and ")} not set on this function. ` +
+          "The site is live, but the contractor has no way to take ownership of it.",
+      });
+      console.warn(
+        `[deploy] no claim link for ${clientId || businessName || siteId}: ` +
+          `${missing.join(", ")} unset`,
+      );
     }
 
     /* 6 — persist, so the next publish finds this site instead of making one */
@@ -270,7 +303,10 @@ export default async (req) => {
       url, siteId, deployId: deploy.id, sessionId, claimUrl,
       clientId, tier, reused,
       files: Object.keys(files).length,
-      warnings: client ? acp.validate(client).filter((p) => p.level === "warn") : [],
+      warnings: [
+        ...(client ? acp.validate(client).filter((p) => p.level === "warn") : []),
+        ...claimWarnings,
+      ],
       persisted: Boolean(clientId),
     });
   } catch (err) {

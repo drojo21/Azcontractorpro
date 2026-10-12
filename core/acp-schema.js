@@ -238,7 +238,8 @@
         },
         deploy: {
           netlify_site_id: '', netlify_url: '', custom_domain: '', repo: '',
-          claim_link_sent_at: '', claimed_at: '', last_built_at: '', last_tier_built: '',
+          claim_url: '', claim_link_sent_at: '', claimed_at: '',
+          last_built_at: '', last_tier_built: '',
         },
         marketing: {},
       };
