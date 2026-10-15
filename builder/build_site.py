@@ -46,6 +46,21 @@ CONFIG = ROOT / "config" / "acp.json"
 ROC_URL = "https://azroc.my.site.com/AZRoc/s/contractor-search?licenseId="
 
 
+AZ_NOTES = json.loads((ROOT / "core" / "az_trade_notes.json").read_text()) \
+    if (ROOT / "core" / "az_trade_notes.json").exists() else {"trades": {}}
+
+
+def az_notes_for(trade: str) -> dict:
+    """
+    Arizona-specific notes for a trade, or empty if we have not written them.
+
+    Deliberately empty rather than generic for the trades not covered: a
+    section of filler reads worse than no section, and the templates skip it
+    when there is nothing to say.
+    """
+    return AZ_NOTES.get("trades", {}).get(trade, {})
+
+
 def load_config() -> dict:
     return json.loads(CONFIG.read_text()) if CONFIG.exists() else {}
 
@@ -215,6 +230,17 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
     if base and not base.startswith("http"):
         base = "https://" + base
 
+    # Arizona-specific questions, appended to whatever the client already has.
+    # Done on the resolved in-memory copy (build() never writes client.json
+    # back), so the FAQ page, the index accordion and the FAQPage JSON-LD all
+    # pick them up without touching a template or the stored record.
+    az = az_notes_for(c["trade"])
+    if az.get("faqs"):
+        existing = {f["q"].strip().lower() for f in c.get("faqs", [])}
+        c["faqs"] = list(c.get("faqs", [])) + [
+            f for f in az["faqs"] if f["q"].strip().lower() not in existing
+        ]
+
     lead_endpoint = c["integrations"].get("lead_endpoint") or cfg.get("apps_script_url", "")
     gallery_endpoint = c["integrations"].get("gallery_endpoint") or lead_endpoint
     trade_label = acp.trades[c["trade"]]["label"]
@@ -266,7 +292,8 @@ def build(client_path: Path, out: Path, tier: str | None = None, base_url: str =
                   hours_human=hours_human(c["hours"]), roc_url=ROC_URL + c["roc_number"],
                   lead_endpoint=lead_endpoint, gallery_endpoint=gallery_endpoint,
                   lead_form_js=lead_js, favicon=favicon(c), year=date.today().year,
-                  url=lambda p: p, slug=slugify, hero_bg_url=hero_bg_url)
+                  url=lambda p: p, slug=slugify, hero_bg_url=hero_bg_url,
+                  az_concerns=az.get("concerns", []), az_season=az.get("seasons", {}))
 
     site_desc = (f"{c['business_name']} — licensed {trade_label.lower()} contractor in {c['city']}, AZ "
                  f"(ROC #{c['roc_number']}). {', '.join(s['name'] for s in c['services'][:3])}. "

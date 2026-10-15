@@ -1,0 +1,400 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "purpose": "Arizona-specific trade knowledge: the things that decide whether this work lasts here, and the questions Arizona customers actually ask. Separate from trade_defaults.json on purpose, because rebuild_defaults.py regenerates that file from a ROC export and would clobber hand-written content.",
+    "usage": "builder/build_site.py reads this and passes it to the templates. A trade with no entry simply renders no notes section.",
+    "coverage": "15 of the trades in trade_defaults.json. The rest are left empty rather than filled with generic text."
+  },
+  "trades": {
+    "masonry": {
+      "concerns": [
+        "Caliche makes footing excavation slow. We price the dig honestly instead of discovering it on day two.",
+        "Hot-weather masonry has rules. Above about 100°F mortar has to be handled differently or the bond suffers, so summer work starts early.",
+        "Monsoon winds find walls that were built without the right rebar and grout spacing. That is most of the repair work we get called for.",
+        "Hard water leaves efflorescence, the white bloom on block. We can treat it and explain what actually stops it coming back."
+      ],
+      "faqs": [
+        {
+          "q": "Why do block walls crack in Arizona?",
+          "a": "Most of the time it is the footing, not the block. Caliche and expansive clay move, and a footing that is too shallow or has no rebar moves with them. We look at the crack pattern first, because that tells us whether it is settlement, a missing control joint, or something that only needs tuckpointing."
+        },
+        {
+          "q": "Can you match the mortar on my existing wall?",
+          "a": "Yes. Mortar color shifts as it ages, so we match to the wall as it looks now rather than to a bag color. On a visible repair we mix a sample, let it cure, and check it in daylight before we do the whole section."
+        },
+        {
+          "q": "How long does a block wall take?",
+          "a": "A straightforward residential wall is usually two to four working days plus cure time: a day to dig and set the footing, a day for it to cure, then laying block. Caliche, a grade change, or a permit can add to that, and we tell you which of those applies before we start."
+        }
+      ],
+      "seasons": {
+        "peak": "October through April",
+        "note": "Large pours and wall work move to early mornings in summer."
+      }
+    },
+    "concrete": {
+      "concerns": [
+        "A slab poured at two in the afternoon in July cures wrong. Summer pours start at first light, and we will say so when we schedule.",
+        "Caliche subgrade has to be ripped and recompacted. Pouring straight onto it is why driveways crack in a pattern.",
+        "Control joints are not decoration. Spacing them correctly is the difference between a hairline at the joint and a crack across the slab.",
+        "Monsoon runoff undercuts flatwork that was poured without thinking about where water goes. We grade for it."
+      ],
+      "faqs": [
+        {
+          "q": "When can I drive on a new driveway?",
+          "a": "Foot traffic after about 24 hours, cars after seven days, and anything heavy like an RV or a loaded truck after 28 days. In summer we water-cure or use a curing compound, because concrete that dries too fast in Arizona heat never reaches full strength."
+        },
+        {
+          "q": "Why is my driveway flaking on the surface?",
+          "a": "That is spalling, and it usually traces back to too much water in the original mix, finishing while the surface was still bleeding, or no sealer against UV and de-icer. Sometimes it can be resurfaced. If the flaking is deep, replacement is the honest answer and we will tell you which one you have."
+        },
+        {
+          "q": "Do you pour in the summer?",
+          "a": "Yes, early. We start at sunrise, keep the mix cool, and cure it properly. We do not pour flatwork in afternoon heat, because the finish and the strength both suffer and you are the one living with it."
+        }
+      ],
+      "seasons": {
+        "peak": "October through May",
+        "note": "Summer pours are sunrise starts."
+      }
+    },
+    "hvac": {
+      "concerns": [
+        "Equipment here is sized for a 110-115°F design day. A unit sized by rule of thumb runs constantly in July and dies early.",
+        "Attics hit 150°F or more. Duct leakage up there is the quietest way to lose a third of the cooling you paid for.",
+        "The pre-monsoon window is when systems fail, because that is the first real load of the year. A tune-up in March beats a no-cool call in June.",
+        "R-410A is being phased down in favor of R-454B. It changes what a replacement costs and what parts stay available, and you should hear that before you buy."
+      ],
+      "faqs": [
+        {
+          "q": "How long does an AC unit last in Arizona?",
+          "a": "Ten to fifteen years, against twenty or more in a mild climate. Our run hours are simply higher. Maintenance moves a unit toward the top of that range, and skipping it moves you toward the bottom."
+        },
+        {
+          "q": "Should I repair or replace?",
+          "a": "If the unit is under ten years old and the repair is a capacitor, contactor or fan motor, repair it. If it is over twelve, uses R-22, and needs a compressor or coil, replacement is usually the cheaper answer over three years. We give you both numbers and let you decide."
+        },
+        {
+          "q": "When should I get a tune-up?",
+          "a": "March or April, before the first 100-degree week. That is when a weak capacitor or a low charge shows up as a cheap part instead of an emergency call during a heat warning."
+        }
+      ],
+      "seasons": {
+        "peak": "May through September",
+        "note": "Book maintenance in March; emergency demand spikes with the first 110°F day."
+      }
+    },
+    "plumbing": {
+      "concerns": [
+        "Phoenix and Tucson water runs very hard. Scale is what kills water heaters, fixtures and tankless units here years early.",
+        "Houses here are on slabs, with no basement. A leak under the slab shows up as a warm spot, a jumping meter or a high bill, not a puddle.",
+        "Pressure regulators fail quietly, and high city pressure then takes out the appliances downstream of them.",
+        "Polybutylene and early-generation CPVC are still in a lot of 1980s and 1990s housing stock here. Both fail at the fitting."
+      ],
+      "faqs": [
+        {
+          "q": "How do I know if I have a slab leak?",
+          "a": "The usual signs are a water bill that jumped with no change in use, a warm spot on the floor, the sound of running water with everything off, or a meter that keeps turning. We locate it electronically first, so we open the smallest piece of slab that does the job."
+        },
+        {
+          "q": "Is a water softener worth it in Arizona?",
+          "a": "For most homes here, yes. Our water is hard enough that scale shortens the life of water heaters, fixtures and anything tankless. A softener is cheaper than replacing a heater early, and the difference shows up in the fixtures within a few months."
+        },
+        {
+          "q": "How long do water heaters last here?",
+          "a": "Eight to twelve years on a tank, and hard water pushes that toward the low end unless it is flushed yearly. If yours is over ten and sitting where a failure would flood finished space, replacing it on your schedule beats replacing it on its own."
+        }
+      ],
+      "seasons": {
+        "peak": "Year round",
+        "note": "Slab-leak and no-hot-water calls rise in winter; hose-bib and irrigation breaks in summer."
+      }
+    },
+    "electrical": {
+      "concerns": [
+        "Adding a heat pump or an EV charger is a load calculation question before it is a wiring question. We run it and show you the numbers.",
+        "Monsoon lightning and utility switching take out electronics. A whole-home surge device costs less than one replaced AC control board.",
+        "Interconnect rules differ between TEP in Tucson and APS and SRP in metro Phoenix. We file to the one that actually serves you.",
+        "A lot of 1960s and 1970s Arizona housing has aluminum branch wiring. It is not automatically a crisis, but it needs the right connectors."
+      ],
+      "faqs": [
+        {
+          "q": "Do I need a panel upgrade for an EV charger?",
+          "a": "Sometimes. It depends on your existing service size and what else is on it, so it is a load calculation, not a guess. Plenty of 200-amp services take a Level 2 charger with load management and no upgrade at all. We run the calculation before we quote."
+        },
+        {
+          "q": "Why do my breakers trip in the summer?",
+          "a": "Usually because the circuit is at its limit and heat makes it worse. AC inrush, a failing compressor, or too much on one kitchen circuit will all do it. A breaker that trips repeatedly is doing its job and telling you something upstream needs looking at."
+        },
+        {
+          "q": "Is surge protection worth it here?",
+          "a": "For most homes, yes. Monsoon storms and utility switching send spikes down the line, and modern AC units, pool equipment and appliances all have boards that do not survive them. One whole-home device plus point-of-use protection on electronics is the standard setup."
+        }
+      ],
+      "seasons": {
+        "peak": "Year round",
+        "note": "Surge-protection and generator interest spikes just before monsoon."
+      }
+    },
+    "roofing": {
+      "concerns": [
+        "On a tile roof the tile is not the waterproofing. The underlayment is, and it is what wears out, usually at twenty to twenty-five years.",
+        "Foam roofs need recoating roughly every five years. Skip two cycles and UV takes the foam itself, which is a far bigger bill.",
+        "Monsoon wind lifts tile and blows debris into valleys and scuppers. Most leaks we find after a storm started at a blocked drain.",
+        "A roof here is under UV load no mild climate ever sees. Materials are rated differently for it, and the cheap option ages visibly faster."
+      ],
+      "faqs": [
+        {
+          "q": "My tile roof is leaking. Do I need all new tile?",
+          "a": "Almost never. The tile is a rain shield and a sun shield, but the underlayment beneath it is the waterproof layer, and that is what fails. We lift and stack your existing tile, replace the underlayment, and reset the same tile, replacing only what broke in handling."
+        },
+        {
+          "q": "How often does a foam roof need recoating?",
+          "a": "About every five years, depending on the coating and the exposure. The recoat is routine maintenance and priced like it. Letting it go two cycles means UV starts eating the foam, and then you are paying to replace the foam instead of refreshing the coating."
+        },
+        {
+          "q": "Will insurance cover my monsoon damage?",
+          "a": "Often, for sudden wind or debris damage, though not for wear. What decides it is documentation. We photograph the damage, write up what failed and why it is storm-related rather than age-related, and give you that in a form an adjuster can work from."
+        }
+      ],
+      "seasons": {
+        "peak": "Year round",
+        "note": "Inspection and repair demand spikes right before and right after monsoon."
+      }
+    },
+    "landscaping": {
+      "concerns": [
+        "Plant selection is the whole job here. A plan built on species that want 20 inches of rain is a plan to replace plants.",
+        "Drip emitters clog with our hard water and mineral load. A system nobody maintains is why half the plants on a block are dead.",
+        "Artificial turf gets genuinely hot in full sun. We talk honestly about placement, infill and shade before you commit.",
+        "Monsoon runoff moves granite and undermines hardscape. Grading and drainage come before the pretty part."
+      ],
+      "faqs": [
+        {
+          "q": "What plants actually survive a Phoenix or Tucson summer?",
+          "a": "The reliable list is longer than people expect: desert willow, red bird of paradise, Texas sage, lantana, agave, hesperaloe, mesquite and palo verde. What matters as much as the species is putting high-water and low-water plants on separate irrigation zones, so nothing is drowned or starved by a shared timer."
+        },
+        {
+          "q": "How much water does a desert landscape save?",
+          "a": "Converting turf to a planted desert landscape typically cuts outdoor water use substantially, and outdoor use is the larger half of most Arizona household bills. The honest number depends on what you start with and how the irrigation is zoned, so we would rather look at your actual bill than quote a percentage."
+        },
+        {
+          "q": "Do you repair irrigation someone else installed?",
+          "a": "Yes, and it is a lot of what we do. Usually it is clogged emitters, a failed valve, a timer nobody reprogrammed after the seasons changed, or a line a previous crew nicked. We test zone by zone and tell you what is worth repairing versus replacing."
+        }
+      ],
+      "seasons": {
+        "peak": "October through April",
+        "note": "Planting season is fall and early spring; irrigation repair peaks in summer."
+      }
+    },
+    "painting": {
+      "concerns": [
+        "Arizona UV is what ends an exterior paint job. Here you are repainting every seven to ten years, not every fifteen.",
+        "Surface temperature governs the schedule. Paint going onto a 140°F west-facing wall flash-dries and fails, so we chase shade around the house.",
+        "Stucco moves and hairline cracks. Elastomeric bridges them; ordinary flat paint telegraphs them straight back within a season.",
+        "Most HOAs here hold an approved color palette. We will pull it and submit for you rather than let you find out after."
+      ],
+      "faqs": [
+        {
+          "q": "How often should I repaint the outside of my house in Arizona?",
+          "a": "Every seven to ten years for most stucco homes, and sooner on south and west elevations, which take the worst of the sun. Chalky residue on your hand, fading that is uneven between walls, or hairline cracks opening up are the signals it is time."
+        },
+        {
+          "q": "Can you paint in the summer?",
+          "a": "Yes, by working the shade. We start on the east side in the morning and follow the shade around, and we stop when the surface is too hot regardless of what the air temperature says. Paint applied to a scorching wall will not bond, and no warranty covers that."
+        },
+        {
+          "q": "Is elastomeric worth the extra cost on stucco?",
+          "a": "On stucco that is already showing hairline cracking, usually yes. It is a thicker, flexible film that bridges those cracks and keeps monsoon rain out of the wall. On a newer, sound stucco wall a quality acrylic may be the better value, and we will say which one your house is."
+        }
+      ],
+      "seasons": {
+        "peak": "October through May",
+        "note": "Exterior work follows the shade in summer; interiors fill the hot months."
+      }
+    },
+    "fencing": {
+      "concerns": [
+        "Arizona pool barrier law is specific about height, gaps, and self-closing, self-latching gates. We build to it, because an inspection failure is your problem otherwise.",
+        "Monsoon downbursts flatten wood fences whose posts were set shallow. Depth and concrete are not where to save money here.",
+        "Caliche means post holes get drilled or hammered, not shoveled. That is a real line item and we show it up front.",
+        "Most HOAs here specify view fence style, color and height. We pull the standard before fabricating."
+      ],
+      "faqs": [
+        {
+          "q": "What does Arizona require for a pool fence?",
+          "a": "In broad terms a barrier at least five feet high on the pool side, no gaps a small child fits through, no handholds or footholds that make it climbable, and gates that are self-closing and self-latching with the latch out of a child's reach. Cities add their own details, so we build to your jurisdiction's version and leave you ready for inspection."
+        },
+        {
+          "q": "How deep do fence posts need to be here?",
+          "a": "Figure a third of the post height in the ground, concreted, and deeper on a tall privacy fence or an exposed lot. Monsoon downbursts are the real design load in Arizona, and shallow posts are the single most common reason a fence comes down in a storm."
+        },
+        {
+          "q": "Block wall or view fence?",
+          "a": "Block for privacy, noise and wind. View fence where you want the mountain or the golf course and the HOA expects it. Plenty of lots end up with both: block on the side yards between neighbors, view fence across the back."
+        }
+      ],
+      "seasons": {
+        "peak": "October through May",
+        "note": "Repair demand spikes after monsoon storms."
+      }
+    },
+    "flooring": {
+      "concerns": [
+        "Everything here goes over a slab. Flatness and moisture testing come first, because no floor fixes a bad substrate.",
+        "A slab leak under tile is a flooring job and a plumbing job. We coordinate rather than tiling over an active leak.",
+        "LVP moves with temperature, and a closed-up Arizona house in July gets hot. Correct expansion gaps are not optional.",
+        "Grout haze and efflorescence come with hard water. We seal and tell you how to clean it without etching it."
+      ],
+      "faqs": [
+        {
+          "q": "Can I put wood floors over a slab in Arizona?",
+          "a": "Engineered wood, yes, glued or floated over a properly prepped and moisture-tested slab. Solid hardwood over a slab is riskier and needs a subfloor system. We moisture-test first, because a reading over spec is the single most common reason a wood floor fails here."
+        },
+        {
+          "q": "Why did my tile crack in a straight line?",
+          "a": "A straight run of cracked tile usually follows a crack or a control joint in the slab beneath it. The fix is not just replacing tile, it is isolating the movement with a crack-isolation membrane first, or the new tile cracks in the same line."
+        },
+        {
+          "q": "Is LVP a good choice for an Arizona house?",
+          "a": "For most homes, yes. It is dimensionally stable enough for our temperature swing, it handles the dust, and it is far more forgiving than wood over a slab. The things that matter are the wear layer thickness and leaving the correct expansion gap at the walls."
+        }
+      ],
+      "seasons": {
+        "peak": "Year round",
+        "note": "Interior trade, largely weather independent."
+      }
+    },
+    "carpentry": {
+      "concerns": [
+        "A patio cover is a wind structure here. Monsoon downbursts take the ones that were built without engineering or proper attachment.",
+        "Shade placement should follow the actual sun angle on your lot. A cover on the wrong elevation is decoration, not relief.",
+        "Our dry air shrinks wood that arrived acclimated somewhere humid. We let material sit before we cut finish work.",
+        "Exposed wood takes brutal UV. Species choice and finish schedule decide whether it looks right in five years."
+      ],
+      "faqs": [
+        {
+          "q": "Do I need a permit for a patio cover?",
+          "a": "In most Arizona jurisdictions, yes, for anything attached or over a certain size, and the plan usually has to show how it handles wind uplift. We handle the submittal. An unpermitted cover becomes your problem at resale or when a storm takes it off the wall."
+        },
+        {
+          "q": "What holds up best outdoors in Arizona sun?",
+          "a": "For structure, steel or properly detailed and finished wood. For decking and trim, species and finish matter more than people expect, and a maintained finish schedule matters more than either. We will tell you what the five-year picture looks like for each option rather than just quoting the cheapest."
+        },
+        {
+          "q": "Can you match existing trim or cabinets?",
+          "a": "Usually. Profiles can be milled to match and finishes can be matched closely, though an exact match to a finish that has aged in Arizona light is hard and we will say so rather than promise it. On visible work we make a sample first."
+        }
+      ],
+      "seasons": {
+        "peak": "October through May",
+        "note": "Shade structure demand climbs ahead of summer."
+      }
+    },
+    "excavating": {
+      "concerns": [
+        "Caliche is the whole conversation. It ranges from workable to needing a hydraulic hammer, and that changes the price honestly, not after the fact.",
+        "Arizona 811 Blue Stake is a legal requirement before digging. We file the ticket and wait the clock out.",
+        "Spoils have to go somewhere. Haul-off and dump fees are a real line item and we itemize them instead of burying them.",
+        "Monsoon turns an open excavation into a pond. We sequence work so holes are not left open into a storm window."
+      ],
+      "faqs": [
+        {
+          "q": "What is caliche and why does it affect my price?",
+          "a": "Caliche is a naturally cemented layer of soil and calcium carbonate, common across Arizona, and it ranges from something a backhoe handles to something that needs a hydraulic hammer. It is the single biggest variable in an excavation price here. We probe first where we can, and when we cannot we quote the range and show you which condition you actually hit."
+        },
+        {
+          "q": "Do you call Blue Stake?",
+          "a": "Always. Arizona 811 is a legal requirement before any excavation, and we file the ticket and wait out the mark period. A contractor who offers to skip it is offering to make a struck gas or fiber line your liability."
+        },
+        {
+          "q": "Do you haul away what you dig out?",
+          "a": "Yes, and it is quoted as its own line so you can see it. Dump fees and trucking are a real share of an excavation cost, and leaving spoils on site is only cheaper if you have somewhere on the property to legally put them."
+        }
+      ],
+      "seasons": {
+        "peak": "October through May",
+        "note": "Work is sequenced around monsoon storm windows."
+      }
+    },
+    "grading": {
+      "concerns": [
+        "Monsoon rain arrives all at once. Drainage here is sized for a short, violent event, not a steady soak.",
+        "Most Arizona municipalities require on-site retention. Getting that wrong means a failed final and a redo.",
+        "Negative drainage toward a slab is the quiet cause of foundation and stucco problems. It is usually fixable with grade alone.",
+        "Compaction testing is cheap compared with settlement under a new slab. We do it where it matters."
+      ],
+      "faqs": [
+        {
+          "q": "Why does water pool next to my house after a storm?",
+          "a": "Almost always negative grade, meaning the dirt falls toward the house instead of away from it, often because landscaping was added over the years and built the grade up. The fix is usually regrading to re-establish fall away from the slab, sometimes with an area drain where there is nowhere for the water to go."
+        },
+        {
+          "q": "What is on-site retention and do I need it?",
+          "a": "Most Arizona jurisdictions require a property to hold a set volume of stormwater on site rather than pushing it to the street or a neighbor. On a new build or a large addition it is part of the permit. We size the basin to the local requirement and build to the approved plan."
+        },
+        {
+          "q": "How is drainage different in Arizona?",
+          "a": "Volume and timing. We can take a large share of the year's rain in a few hours, so systems are sized for a short intense event and for carrying debris, and surfaces have to survive going from bone dry to flowing and back. A design copied from a wetter climate tends to be undersized and clogs."
+        }
+      ],
+      "seasons": {
+        "peak": "February through June",
+        "note": "Drainage work is best completed before monsoon."
+      }
+    },
+    "sheetrock": {
+      "concerns": [
+        "Knockdown texture is close to universal on Arizona walls, and matching it is the whole craft of a patch that disappears.",
+        "Most of the drywall damage we repair started as a roof leak or a slab leak. We check that it is actually dry before we close it up.",
+        "Settlement cracking at corners is common with our soils. A patch that ignores why it cracked will crack again in the same place.",
+        "Dry air flashes joint compound fast. That changes the schedule and how many coats it takes to finish flat."
+      ],
+      "faqs": [
+        {
+          "q": "Can you match my existing texture?",
+          "a": "Yes, and in Arizona that usually means knockdown, with orange peel and skip trowel next most common. Matching is about spray pressure, mud consistency and knockdown timing. We do a test panel on larger repairs so you see the match before it goes on the wall."
+        },
+        {
+          "q": "My ceiling has a stain. Is that still leaking?",
+          "a": "It might not be, but we check rather than assume. We moisture-meter the area and look above it, because closing up drywall over a wet cavity gets you mold and the same repair twice. If it is still active, the leak gets fixed first."
+        },
+        {
+          "q": "Why do the same cracks keep coming back?",
+          "a": "Because the crack is movement, not a surface defect. Corner and seam cracks from soil movement or framing shrinkage will reopen through a simple skim coat. The repair has to re-tape the joint, sometimes with mesh, and that holds."
+        }
+      ],
+      "seasons": {
+        "peak": "Year round",
+        "note": "Repair volume rises after monsoon roof leaks."
+      }
+    },
+    "general": {
+      "concerns": [
+        "Permitting differs by jurisdiction here. Phoenix, Tucson, Mesa, Scottsdale and the counties each have their own process, and we work the one you are in.",
+        "Casita and ADU rules have changed in Arizona. What is allowed on your lot is worth checking before you design around it.",
+        "Summer changes sequencing. Roof and exterior work goes early in the day, interior work fills the afternoon.",
+        "Heat and envelope decisions, insulation, glazing, duct location, are where a remodel here either pays you back monthly or does not."
+      ],
+      "faqs": [
+        {
+          "q": "Do you pull the permits?",
+          "a": "Yes, as part of the job, and the permit is in our license. We handle submittal, inspections and the final. A contractor asking you to pull an owner-builder permit for work they are doing is shifting their liability onto you."
+        },
+        {
+          "q": "How long does a kitchen remodel take?",
+          "a": "Typically six to ten weeks once materials are on site, with demo and rough-in early and cabinets, counters and tile at the end. The honest variables are long-lead items and inspection scheduling. We build the schedule around the long-lead item instead of starting demo and then waiting."
+        },
+        {
+          "q": "Can I build a casita on my lot?",
+          "a": "Often, and Arizona rules around accessory dwelling units have been loosening, but it comes down to your zoning, lot size, setbacks and utility capacity. We check what your jurisdiction allows on your specific parcel before anyone draws anything."
+        }
+      ],
+      "seasons": {
+        "peak": "Year round",
+        "note": "Exterior phases are scheduled around summer heat."
+      }
+    }
+  }
+}

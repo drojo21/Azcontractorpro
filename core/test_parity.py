@@ -211,6 +211,18 @@ def run_python():
     out["clients"]["roundtrip"] = acp.resolve(
         acp.from_client_info_block(acp.to_client_info_block(out["clients"]["block"])))
 
+    # One client per trade, so every theme in trade_defaults.json goes through
+    # resolve() in both runtimes. The derived contrast colors use pow(), and
+    # CPython and V8 do not have to agree in the last bit — comparing all 30
+    # trades is what proves they do in practice rather than hoping.
+    for trade in sorted(acp.defaults["trades"]):
+        out["clients"][f"trade:{trade}"] = acp.resolve({
+            "business_name": f"{trade.title()} Test Co",
+            "trade": trade, "roc_number": "123456", "license_class": "CR-11",
+            "phone": "(602) 555-0100", "city": "Mesa", "zip": "85201",
+            "roc_status": "Active", "tier": "lite",
+        })
+
     for key, client in out["clients"].items():
         out["validate"][key] = acp.validate(client)
         out["readiness"][key] = list(acp.readiness(client))
@@ -243,6 +255,15 @@ out.clients.block = acp.resolve(acp.fromClientInfoBlock(F.INFO_BLOCK));
 out.clients.form = acp.resolve(acp.fromBuilderForm(F.BUILDER_FORM));
 out.clients.roundtrip = acp.resolve(
   acp.fromClientInfoBlock(acp.toClientInfoBlock(out.clients.block)));
+
+Object.keys(defaults.trades).sort().forEach((trade) => {
+  out.clients['trade:' + trade] = acp.resolve({
+    business_name: trade.charAt(0).toUpperCase() + trade.slice(1) + ' Test Co',
+    trade, roc_number: '123456', license_class: 'CR-11',
+    phone: '(602) 555-0100', city: 'Mesa', zip: '85201',
+    roc_status: 'Active', tier: 'lite',
+  });
+});
 
 for (const k of Object.keys(out.clients)) {
   out.validate[k] = acp.validate(out.clients[k]);

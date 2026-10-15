@@ -72,6 +72,69 @@ def shade(hex_color: str, pct: float) -> str:
     return "#%02x%02x%02x" % tuple(out)
 
 
+# --------------------------------------------------------------- contrast
+# The templates used to hardcode `color:#111` on the accent and `#fff` on the
+# primary, and painted accent text straight onto primary backgrounds. Audited
+# across the 30 trades in trade_defaults.json that produced 52 colour pairs
+# below the 4.5:1 WCAG AA bar for normal text — the eyebrow colour failed on 19
+# of 30 trades, as low as 2.18:1. These derive readable variants instead of
+# assuming one.
+#
+# Every step here is integer-stepped and mirrored exactly in acp-schema.js,
+# because test_parity.py diffs resolve() output between the two byte for byte.
+
+INK_DARK = "#111111"
+INK_LIGHT = "#ffffff"
+
+
+def _channel_luminance(c: float) -> float:
+    c = c / 255.0
+    return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def relative_luminance(hex_color: str) -> float:
+    """WCAG relative luminance. Matches acp-schema.js."""
+    h = str(hex_color or "#000000").lstrip("#")
+    if len(h) == 3:
+        h = "".join(ch * 2 for ch in h)
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    return (0.2126 * _channel_luminance(r)
+            + 0.7152 * _channel_luminance(g)
+            + 0.0722 * _channel_luminance(b))
+
+
+def contrast_ratio(a: str, b: str) -> float:
+    """WCAG contrast ratio between two hex colors. Matches acp-schema.js."""
+    la, lb = relative_luminance(a), relative_luminance(b)
+    hi, lo = (la, lb) if la > lb else (lb, la)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def on_color(background: str) -> str:
+    """Whichever of near-black or white reads better on `background`."""
+    return (INK_LIGHT if contrast_ratio(background, INK_LIGHT)
+            >= contrast_ratio(background, INK_DARK) else INK_DARK)
+
+
+def shade_until(color: str, background: str, minimum: float = 4.5) -> str:
+    """
+    Step `color` away from `background` until it clears `minimum` against it.
+
+    Integer percent steps so Python and JS land on the same hex: the result is
+    decided by a loop count, not by a float comparison that could differ in the
+    last bit between the two runtimes.
+    """
+    if contrast_ratio(color, background) >= minimum:
+        return color
+    # Move away from the background: darken on a light ground, lighten on dark.
+    direction = -1 if relative_luminance(background) > 0.5 else 1
+    for step in range(1, 61):
+        candidate = shade(color, direction * step / 100.0)
+        if contrast_ratio(candidate, background) >= minimum:
+            return candidate
+    return INK_DARK if direction < 0 else INK_LIGHT
+
+
 def digits(value: str) -> str:
     return re.sub(r"\D", "", str(value or ""))
 
@@ -557,6 +620,13 @@ class ACP:
         t["primary_light"] = shade(t["primary"], 0.18)
         t["primary_dark"] = shade(t["primary"], -0.22)
         t["accent_dark"] = shade(t["accent"], -0.18)
+        # Readable ink for text sitting ON these colors, and accent variants
+        # that stay legible as text on a light page and on the dark bands.
+        t["on_primary"] = on_color(t["primary"])
+        t["on_primary_dark"] = on_color(t["primary_dark"])
+        t["on_accent"] = on_color(t["accent"])
+        t["accent_on_light"] = shade_until(t["accent"], "#ffffff")
+        t["accent_on_dark"] = shade_until(t["accent"], t["primary_dark"])
         fonts = self.defaults["fonts"]
         t["google_fonts"] = "|".join(filter(None, [
             fonts.get(t["display_font"], ""), fonts.get(t["body_font"], ""),

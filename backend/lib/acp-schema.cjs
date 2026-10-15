@@ -50,6 +50,53 @@
     return '#' + out.map(c => c.toString(16).padStart(2, '0')).join('');
   }
 
+
+  // ------------------------------------------------------------- contrast
+  // Mirrors acp_schema.py exactly. test_parity.py diffs resolve() output
+  // between the two byte for byte, so any change here needs the same change
+  // there. Integer percent steps keep both runtimes on the same hex.
+
+  const INK_DARK = '#111111';
+  const INK_LIGHT = '#ffffff';
+
+  function channelLuminance(c) {
+    const v = c / 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  }
+
+  function relativeLuminance(hexColor) {
+    let h = String(hexColor || '#000000').replace(/^#/, '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    const [r, g, b] = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+    return 0.2126 * channelLuminance(r)
+         + 0.7152 * channelLuminance(g)
+         + 0.0722 * channelLuminance(b);
+  }
+
+  function contrastRatio(a, b) {
+    const la = relativeLuminance(a);
+    const lb = relativeLuminance(b);
+    const hi = la > lb ? la : lb;
+    const lo = la > lb ? lb : la;
+    return (hi + 0.05) / (lo + 0.05);
+  }
+
+  function onColor(background) {
+    return contrastRatio(background, INK_LIGHT) >= contrastRatio(background, INK_DARK)
+      ? INK_LIGHT : INK_DARK;
+  }
+
+  function shadeUntil(color, background, minimum) {
+    const min = minimum === undefined ? 4.5 : minimum;
+    if (contrastRatio(color, background) >= min) return color;
+    const direction = relativeLuminance(background) > 0.5 ? -1 : 1;
+    for (let step = 1; step <= 60; step++) {
+      const candidate = shade(color, (direction * step) / 100);
+      if (contrastRatio(candidate, background) >= min) return candidate;
+    }
+    return direction < 0 ? INK_DARK : INK_LIGHT;
+  }
+
   const digits = v => String(v == null ? '' : v).replace(/\D/g, '');
 
   function tel(phone) {
@@ -523,6 +570,13 @@
       t.primary_light = shade(t.primary, 0.18);
       t.primary_dark = shade(t.primary, -0.22);
       t.accent_dark = shade(t.accent, -0.18);
+      // Readable ink for text sitting ON these colors, and accent variants
+      // that stay legible as text on a light page and on the dark bands.
+      t.on_primary = onColor(t.primary);
+      t.on_primary_dark = onColor(t.primary_dark);
+      t.on_accent = onColor(t.accent);
+      t.accent_on_light = shadeUntil(t.accent, '#ffffff');
+      t.accent_on_dark = shadeUntil(t.accent, t.primary_dark);
       t.google_fonts = [defaults.fonts[t.display_font] || '', defaults.fonts[t.body_font] || '']
         .filter(Boolean).join('|');
       c.theme = t;

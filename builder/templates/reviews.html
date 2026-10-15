@@ -6,6 +6,6 @@
   {# No reviews yet: ask for one only when there is somewhere to leave it. Without
      a Place ID this card was a prompt with no button — build_site.py drops the
      whole page in that case, and this branch keeps it impossible either way. #}
-  {% elif c.integrations.google_place_id %}<div class="card" style="max-width:640px"><div class="stars">★★★★★</div><p class="quote">Worked with {{ c.short_name }}? A short review helps other {{ c.city }} homeowners find a licensed contractor.</p><a class="btn btn-primary" href="https://search.google.com/local/writereview?placeid={{ c.integrations.google_place_id }}" rel="noopener" target="_blank">Leave a Google review</a></div>{% endif %}
+  {% elif c.integrations.google_place_id %}<div class="card" style="max-width:640px"><p class="quote">Worked with {{ c.short_name }}? A short review helps other {{ c.city }} homeowners find a licensed contractor.</p><a class="btn btn-primary" href="https://search.google.com/local/writereview?placeid={{ c.integrations.google_place_id }}" rel="noopener" target="_blank">Leave a Google review</a></div>{% endif %}
 </div></section>
 {% endblock %}

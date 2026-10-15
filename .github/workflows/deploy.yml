@@ -63,6 +63,12 @@ jobs:
       - name: ROC gate parity (python ↔ js)
         run: python3 core/test_parity_roc.py
 
+      # Trade colours are per-trade, so a readable pair on masonry says nothing
+      # about flooring. This checks all 30 against every pair the templates
+      # actually paint, and fails if base.html hardcodes ink on a brand colour.
+      - name: Contrast (every trade theme)
+        run: python3 core/test_contrast.py
+
       - name: Demo request -> client.json
         id: demo
         if: github.event_name == 'repository_dispatch'

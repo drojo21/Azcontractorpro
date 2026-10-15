@@ -28,6 +28,21 @@
   </div>
 </section>
 
+{% if az_concerns %}
+<section id="arizona">
+  <div class="wrap">
+    <p class="eyebrow">Local conditions</p>
+    <h2>{{ trade_label }} in Arizona is its own problem</h2>
+    <p class="lede">The things that decide whether this work lasts here are not the things that matter elsewhere.</p>
+    <ol class="az-notes">
+      {% for note in az_concerns %}<li>{{ note }}</li>{% endfor %}
+    </ol>
+    {% if az_season and az_season.peak %}
+    <p class="az-season">Busiest stretch for {{ trade_label.lower() }} work: <strong>{{ az_season.peak }}</strong>.{% if az_season.note %} {{ az_season.note }}{% endif %}</p>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
 <section class="alt" id="about">
   <div class="wrap two">
     <div class="fade">
@@ -73,7 +88,7 @@
     {% elif c.reviews %}
     <div class="grid">{% for r in c.reviews %}<div class="card fade"><div class="stars">{{ '★' * (r.rating or 5) }}</div><p class="quote">“{{ r.text }}”</p><p class="who">— {{ r.name }}{% if r.city %}, {{ r.city }}{% endif %}</p></div>{% endfor %}</div>
     {% else %}
-    <div class="card fade" style="max-width:640px"><div class="stars">★★★★★</div><p class="quote">Worked with {{ c.short_name }}? A short review helps other {{ c.city }} homeowners find a licensed contractor.</p>{% if c.integrations.google_place_id %}<a class="btn btn-primary" href="https://search.google.com/local/writereview?placeid={{ c.integrations.google_place_id }}" rel="noopener" target="_blank">Leave a Google review</a>{% else %}<a class="btn btn-primary" href="#quote">Contact us</a>{% endif %}</div>
+    <div class="card fade" style="max-width:640px"><p class="quote">Worked with {{ c.short_name }}? A short review helps other {{ c.city }} homeowners find a licensed contractor.</p>{% if c.integrations.google_place_id %}<a class="btn btn-primary" href="https://search.google.com/local/writereview?placeid={{ c.integrations.google_place_id }}" rel="noopener" target="_blank">Leave a Google review</a>{% else %}<a class="btn btn-primary" href="#quote">Contact us</a>{% endif %}</div>
     {% endif %}
   </div>
 </section>
