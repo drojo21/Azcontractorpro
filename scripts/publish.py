@@ -87,7 +87,6 @@ def main():
             payload["siteId"] = pinned
         status, res = post(f"{backend.rstrip('/')}/api/deploy", key, payload)
         if status == 200:
-            d = client.setdefault("deploy", {})
             returned = res.get("siteId", "")
             # A client.json that already names a site is a deliberate choice —
             # it is how a build gets pointed at the site holding the custom
@@ -100,7 +99,16 @@ def main():
                       f"{pinned}. Keeping the pin; the published site may be wrong — check "
                       f"before sending anything to this contractor.")
                 bad += 1
-            elif returned and not pinned:
+                # Leave the record completely alone. Writing the new site's URL
+                # next to the pinned site's id would leave client.json
+                # describing two different sites, and reporting "ok" for a
+                # deploy that landed somewhere unintended is worse than silence.
+                # A current backend refuses this case outright (409); this stays
+                # as the guard for an older one.
+                continue
+
+            d = client.setdefault("deploy", {})
+            if returned and not pinned:
                 d["netlify_site_id"] = returned
             d.update({"netlify_url": res.get("url", ""),
                       "last_built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -111,7 +119,10 @@ def main():
             ok += 1
             print(f"  ok   {cid} -> {res.get('url')}  ({'reused' if res.get('reused') else 'new site'})")
         elif status == 409:
-            print(f"  hold {cid}: {res.get('error')}")  # claimed by contractor — expected
+            # Two cases now: the contractor claimed the site, or the pinned site
+            # is gone and the backend refused to invent a replacement. Both need
+            # a person, and the backend's message says which.
+            print(f"  hold {cid}: {res.get('error')}")
             bad += 1
         else:
             print(f"  FAIL {cid} [{status}]: {res.get('error') or res}")

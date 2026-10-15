@@ -145,6 +145,43 @@ let firstSite, firstUrl;
   check('only one site ever created for this client', siteCounter === 2, `counter=${siteCounter}`);
 }
 
+console.log('\nA PINNED SITE THAT HAS GONE AWAY');
+{
+  // The caller pinning a siteId is how a build is aimed at the site holding
+  // the custom domain. If that site 404s, inventing a replacement silently
+  // abandons the domain and any claim link already sent — and because
+  // publish.py then refuses to record the new id, the next run does it again.
+  // Four runs of the real pipeline created four orphan sites this way.
+  const before = siteCounter;
+  const r = await post({
+    client: { ...CLIENT, client_id: 'pinned-but-deleted' },
+    files: { 'index.html': '<h1>x</h1>' },
+    siteId: 'site-deleted-in-the-netlify-ui',
+  });
+  const b = await r.json();
+  check('a pinned site that 404s is refused, not silently replaced',
+    r.status === 409 && b.pinned === true, `status=${r.status} ${b.error}`);
+  check('and no orphan site is created',
+    siteCounter === before, `site counter went ${before} -> ${siteCounter}`);
+  check('the error names the site and says how to fix it',
+    /site-deleted-in-the-netlify-ui/.test(b.error) && /netlify_site_id/.test(b.error), b.error);
+}
+
+console.log('\nA STALE STORED SITE STILL RECOVERS');
+{
+  // Same 404, but the id came from our own Blobs cache rather than the caller.
+  // That is us being stale, not a deliberate pin, so creating a replacement is
+  // the right move and must keep working.
+  const STALE = { ...CLIENT, client_id: 'stale-blobs-entry' };
+  const first = await (await post({ client: STALE, files: { 'index.html': 'a' } })).json();
+  sites.delete(first.siteId);                       // deleted out from under us
+  const r = await post({ client: STALE, files: { 'index.html': 'b' } });
+  const b = await r.json();
+  check('a stale stored site is replaced rather than failing',
+    r.status === 200 && b.siteId !== first.siteId && b.reused === false,
+    `status=${r.status} siteId=${b.siteId} was=${first.siteId}`);
+}
+
 console.log('\nCLAIM ATTRIBUTION');
 {
   const r = await claimed(new Request('https://x/api/claimed', {

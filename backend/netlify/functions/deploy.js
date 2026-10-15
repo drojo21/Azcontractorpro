@@ -147,6 +147,11 @@ export default async (req) => {
   // Priority: what the caller passed, then what we stored. The stored value is
   // what makes this survive a closed browser tab.
   const stored = clientId ? await getClient(clientId) : null;
+  // Where the id came from matters once it turns out to be dead. An id the
+  // caller pinned is a deliberate choice — it is how a build is aimed at the
+  // site holding the custom domain — so dropping it silently is never right.
+  // An id recovered from Blobs is only our own cache, and may be stale.
+  const pinnedByCaller = Boolean(body.siteId);
   let siteId = body.siteId || stored?.deploy?.netlify_site_id || null;
   let reused = Boolean(siteId);
 
@@ -176,6 +181,28 @@ export default async (req) => {
           });
         }
         if (err.status !== 404) throw err;
+
+        // The site is gone, or this token cannot see it — Netlify answers 404,
+        // not 403, for a site that lives on another account.
+        if (pinnedByCaller) {
+          // Falling through to "create a new site" here is what produced a
+          // fresh orphan on every run: publish.py rightly refuses to overwrite
+          // the pin with the new id and exits non-zero, so the commit step is
+          // skipped, the stale pin survives, and the next run does it again.
+          return json(409, {
+            error:
+              `The pinned Netlify site ${siteId} no longer exists, or this token cannot ` +
+              `see it (a site on another Netlify account also answers 404). Refusing to ` +
+              `publish to a new site, because that would silently abandon the pinned one ` +
+              `along with any custom domain or claim link already sent for it. Either ` +
+              `point clients/${clientId || "<client-id>"}/client.json at a live site, or ` +
+              `clear deploy.netlify_site_id so a new site is created and recorded.`,
+            siteId,
+            clientId,
+            pinned: true,
+          });
+        }
+
         siteId = null;
         reused = false;
       }
