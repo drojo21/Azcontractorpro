@@ -557,7 +557,7 @@ footer ul li,footer p{overflow-wrap:anywhere}
           <li>Your domain, SSL, Netlify hosting</li>
           <li>Up to 5 photos, one round of edits</li>
         </ul>
-        <a class="btn btn-ink" href="SQUARE_LINK_STARTER" data-square="starter">Start with Starter</a>
+        <a class="btn btn-ink" href="https://acp-backend-tucson.netlify.app/api/checkout?tier=starter" data-checkout="starter">Start with Starter</a>
         <p class="fine">Pay setup now; monthly begins when the site goes live.</p>
       </div>
 
@@ -579,7 +579,7 @@ footer ul li,footer p{overflow-wrap:anywhere}
           <li class="plus">sitemap.xml, robots.txt, per-page meta</li>
           <li class="plus">Unlimited content changes</li>
         </ul>
-        <a class="btn btn-amber" href="SQUARE_LINK_PRO" data-square="pro">Start with Pro</a>
+        <a class="btn btn-amber" href="https://acp-backend-tucson.netlify.app/api/checkout?tier=pro" data-checkout="pro">Start with Pro</a>
         <p class="fine">Pay setup now; monthly begins when the site goes live.</p>
       </div>
 
@@ -600,7 +600,7 @@ footer ul li,footer p{overflow-wrap:anywhere}
           <li class="plus">Ten ready-to-post Facebook templates</li>
           <li class="plus">Implementation guide and a 30-day check-in call</li>
         </ul>
-        <a class="btn btn-ink" href="SQUARE_LINK_KIT" data-square="kit">Start with the Kit</a>
+        <a class="btn btn-ink" href="https://acp-backend-tucson.netlify.app/api/checkout?tier=kit" data-checkout="kit">Start with the Kit</a>
         <p class="fine">Pay setup now; monthly begins when the site goes live.</p>
       </div>
 
@@ -761,6 +761,7 @@ footer ul li,footer p{overflow-wrap:anywhere}
           <li><a href="#pricing">Pro — $997 + $99/mo</a></li>
           <li><a href="#pricing">Full Kit — $1,997 + $199/mo</a></li>
           <li><a href="#demo">Free demo</a></li>
+          <li><a href="https://billing.stripe.com/p/login/28EaEX2E97Yj8dV2OqdZ600" data-portal rel="noopener">Manage my billing</a></li>
         </ul>
       </div>
       <div>
@@ -819,12 +820,11 @@ footer ul li,footer p{overflow-wrap:anywhere}
     counters.forEach(function(el){var r=el.getBoundingClientRect();if(r.top>innerHeight){el.textContent='0';cio.observe(el)}});
   }
 
-  /* Square checkout links: replace SQUARE_LINK_* placeholders before launch; until then, buttons go to the demo form */
-  document.querySelectorAll('[data-square]').forEach(function(a){
-    if(/^SQUARE_LINK_/.test(a.getAttribute('href'))){
-      a.setAttribute('href','#demo');
-      a.title='Checkout link not connected yet — starts with the free demo';
-    }
+  /* Buy buttons → Stripe Checkout through acp-backend (/api/checkout). Tag the
+     button with where the visitor came back from, so "← Back" on Stripe's page
+     returns to the pricing section rather than the top of the page. */
+  document.querySelectorAll('[data-checkout]').forEach(function(a){
+    try{var u=new URL(a.href);u.searchParams.set('back',location.origin+location.pathname+'#pricing');a.href=u.toString()}catch(e){}
   });
 
   /* lead form — same contract as lead-form.js on every AZ Contractor Pro site */

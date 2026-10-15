@@ -17,9 +17,10 @@ GitHub Actions deploy.yml (repository_dispatch)
         ▼
 Apps Script handleDemoReady()
         │  matches the Demos row, emails the prospect:
-        │  live link + Starter / Pro / Kit buttons (Square links) + claim link
+        │  live link + Starter / Pro / Kit buttons (Stripe Checkout via /api/checkout) + claim link
         ▼
-Prospect buys through Square, or replies. You call them.
+Prospect pays setup in Stripe Checkout (monthly starts later), or replies.
+stripe-webhook.js marks the client paid and emails you. You call them.
 ```
 
 Typical latency: form → email in about 2–3 minutes (Actions spin-up + Netlify CDN).
@@ -36,7 +37,8 @@ Typical latency: form → email in about 2–3 minutes (Actions spin-up + Netlif
    | `GITHUB_TOKEN` | Fine-grained PAT on `drojo21/Azcontractorpro` with **Contents: Read and write** (GitHub → Settings → Developer settings → Personal access tokens → Fine-grained) |
    | `GITHUB_REPO` | `drojo21/Azcontractorpro` |
    | `DEMO_SECRET` | any long random string (same value goes into GitHub secret `APPS_SCRIPT_SECRET`) |
-   | `SQUARE_LINK_STARTER` / `SQUARE_LINK_PRO` / `SQUARE_LINK_KIT` | Square payment links (leave blank until you have them — buttons fall back to azcontractorpro.com/#pricing) |
+   | `BACKEND_URL` | `https://acp-backend-tucson.netlify.app` (the default — only set it if the backend moves). Email Buy buttons go to `<BACKEND_URL>/api/checkout?tier=…&client=…` |
+   | `CHECKOUT_ENABLED` | `true` (default). `false` sends the buttons to the sales site's pricing section instead |
    | `SALES_SITE_URL` | `https://azcontractorpro.com` |
 
 3. **Registry tab** — add a row: `client_id = azcontractorpro`, `business_name = AZ Contractor Pro`, `notification_email = <your email>`, `status = active`. Then run `flushRegistryCache()` once.
@@ -49,9 +51,9 @@ Typical latency: form → email in about 2–3 minutes (Actions spin-up + Netlif
 2. **Settings → Secrets and variables → Actions**: add `APPS_SCRIPT_SECRET` = the same value as `DEMO_SECRET` above. (`BUILDER_KEY` and `GOOGLE_SERVICE_ACCOUNT_JSON` already exist.)
 3. The workflow already has `permissions: contents: write`; nothing else to enable.
 
-### 3. Square links (when ready)
+### 3. Stripe checkout
 
-Put the three payment links in `config/acp.json → square_links` (so demo sites get real Buy buttons) **and** in the Script properties above (so emails do). Commit + push; existing demos get the buttons the next time they rebuild.
+Payments run on Stripe now — see **docs/STRIPE.md** for the one-time setup (API key, webhook, env vars). `config/acp.json → stripe.checkout_enabled` turns the Buy buttons on demo sites on or off; prices live in Stripe, not in this repo.
 
 ### 4. Sales site
 
