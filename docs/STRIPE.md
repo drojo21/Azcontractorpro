@@ -28,7 +28,7 @@ Design choices came from Stripe's integration planner: hosted Checkout, flat-rat
 | Products | `acp_starter`, `acp_pro`, `acp_kit` |
 | Prices (lookup keys) | `acp_starter_setup` $497 · `acp_starter_monthly` $49/mo · `acp_pro_setup` $997 · `acp_pro_monthly` $99/mo · `acp_kit_setup` $1,997 · `acp_kit_monthly` $199/mo |
 | Customer Portal | `bpc_1UP2mbFIrmS5HqBYoAbT43of` (default): update card, invoice history, edit contact info, cancel at period end. Plan switching is **off** — upgrades change the setup fee, so do those by hand. |
-| Portal login link | https://billing.stripe.com/p/login/28EaEX2E97Yj8dV2OqdZ600 (on the sales-site footer and thank-you page) |
+| Portal login link | https://billing.stripe.com/p/login/28EaEX2E97Yj8dV2OqdZ600 (footer and `thanks.html` of the live site, repo `drojo21/azcontractorprowebsite`) |
 
 Change a price: edit `backend/stripe-setup.mjs` and run it. It moves the lookup key to the new price; existing subscribers keep theirs.
 
@@ -44,7 +44,7 @@ Site configuration → Environment variables. Keys come from Stripe → Develope
 | `STRIPE_WEBHOOK_SECRET` | `whsec_…` from step 2 (Your account endpoint) |
 | `STRIPE_CONNECT_WEBHOOK_SECRET` | `whsec_…` from step 2 (Connected accounts endpoint) |
 | `ROUTER_KEY` | any long random string — same value as Apps Script `STRIPE_ROUTER_KEY` |
-| `SALES_SITE_URL` | `https://azcontractorpro.net` |
+| `SALES_SITE_URL` | `https://azcontractorpro.net` — the live site (repo `drojo21/azcontractorprowebsite`). Buyers land on its `/thanks.html` after paying. |
 | `MONTHLY_START_DELAY_DAYS` | `14` (default). Days between paying setup and the first monthly charge. `0` = first month charged at checkout. |
 | `PLATFORM_FEE_BPS` | optional. Your cut of contractor payments in basis points (`50` = 0.5%). Unset = none. |
 | `PLATFORM_FEE_CAP_CENTS` | optional, default `2500` ($25 max per payment) |
