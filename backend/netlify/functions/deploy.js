@@ -161,9 +161,10 @@ export default async (req) => {
 
   try {
     /* 1 — site */
+    let siteInfo = null;
     if (siteId) {
       try {
-        await nf(`/sites/${siteId}`, {}, NETLIFY_TOKEN);
+        siteInfo = await nf(`/sites/${siteId}`, {}, NETLIFY_TOKEN);
       } catch (err) {
         // 404: deleted in the UI. 401/403: almost certainly claimed, so the
         // site now belongs to the contractor and this token can't touch it.
@@ -200,6 +201,42 @@ export default async (req) => {
         body: JSON.stringify(payload),
       }, NETLIFY_TOKEN);
       siteId = site.id;
+      siteInfo = site;
+    }
+
+    /* 1b — the client's own domain, once their setup form names one.
+       Netlify adds the www/apex partner itself and issues HTTPS as soon as the
+       client's DNS points here. A domain already on the site is never replaced,
+       and nothing about DNS is allowed to fail a publish: a typo'd or taken
+       domain comes back as a note for the operator, not an error. */
+    const defaultHost = siteInfo?.name ? `${siteInfo.name}.netlify.app` : "";
+    let domainNote = "";
+    const wantDomain = (() => {
+      try {
+        const raw = client?.deploy?.custom_domain || "";
+        return raw ? new URL(/^https?:\/\//.test(raw) ? raw : `https://${raw}`).host.toLowerCase() : "";
+      } catch { return ""; }
+    })();
+    if (siteInfo && wantDomain && !wantDomain.endsWith(".netlify.app")) {
+      const current = String(siteInfo.custom_domain || "").toLowerCase();
+      const aliases = (siteInfo.domain_aliases || []).map((d) => String(d).toLowerCase());
+      if (current === wantDomain || aliases.includes(wantDomain)) {
+        domainNote = "";
+      } else if (current) {
+        domainNote = `site already uses ${current}; left it alone (wanted ${wantDomain})`;
+      } else {
+        try {
+          await nf(`/sites/${siteId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ custom_domain: wantDomain }),
+          }, NETLIFY_TOKEN);
+          domainNote = `custom domain set to ${wantDomain}`;
+        } catch (err) {
+          domainNote = `could not set custom domain ${wantDomain}: ${err.message}`;
+          console.warn("[deploy]", clientId, domainNote);
+        }
+      }
     }
 
     /* 2 — digests for every file */
@@ -256,6 +293,7 @@ export default async (req) => {
         deploy: {
           netlify_site_id: siteId,
           netlify_url: url,
+          ...(defaultHost ? { netlify_subdomain: defaultHost } : {}),
           session_id: sessionId,
           last_deploy_id: deploy.id,
           last_built_at: new Date().toISOString(),
@@ -269,6 +307,10 @@ export default async (req) => {
     return json(200, {
       url, siteId, deployId: deploy.id, sessionId, claimUrl,
       clientId, tier, reused,
+      // The *.netlify.app address keeps working before (and after) a custom
+      // domain's DNS is in place — it is what DNS CNAMEs point at.
+      defaultUrl: defaultHost ? `https://${defaultHost}` : "",
+      domainNote,
       files: Object.keys(files).length,
       warnings: client ? acp.validate(client).filter((p) => p.level === "warn") : [],
       persisted: Boolean(clientId),
