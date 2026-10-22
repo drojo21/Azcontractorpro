@@ -1,4 +1,8 @@
-# Free-demo pipeline (azcontractorpro.com → live site → email with checkout)
+# Free-demo pipeline (azcontractorpro.net → live site → email with checkout)
+
+> Since the autopilot: the sales page shows the build live and polls `demo_status`,
+> failures report back (`demo_failed`), and everything after checkout is automatic.
+> See [AUTOPILOT.md](AUTOPILOT.md).
 
 ```
 azcontractorpro.com  "Build my free demo site" form
