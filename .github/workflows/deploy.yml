@@ -70,7 +70,10 @@ jobs:
           PAYLOAD: ${{ toJSON(github.event.client_payload) }}
         run: |
           printf '%s' "$PAYLOAD" > /tmp/demo-request.json
-          python3 scripts/demo_request.py --payload-file /tmp/demo-request.json
+          # stderr is kept so a refusal can be explained to the router (demo_failed.py)
+          python3 scripts/demo_request.py --payload-file /tmp/demo-request.json 2>/tmp/demo-err.txt \
+            || { cat /tmp/demo-err.txt >&2; exit 1; }
+          cat /tmp/demo-err.txt >&2
 
       - name: Build
         run: |
@@ -89,15 +92,31 @@ jobs:
           BUILDER_KEY: ${{ secrets.BUILDER_KEY }}
         run: python3 scripts/publish.py
 
+      # Paying customers who finished the setup form get "your site is live"
+      # (with DNS steps for their domain) the first time their site publishes.
+      - name: Notify paying customers (site live)
+        env:
+          APPS_SCRIPT_SECRET: ${{ secrets.APPS_SCRIPT_SECRET }}
+        run: python3 scripts/live_notify.py
+
       # Deploy-before-commit: if publish failed we never get here, so a broken
       # deploy leaves no half-updated client.json behind.
+      # The autopilot (acp-backend) also commits to clients/ — a buyer's setup
+      # form can land while this run is publishing — so rebase and retry rather
+      # than fail the run on a non-fast-forward push.
       - name: Record site ids back into clients/
         run: |
           git config user.name "acp-bot"
           git config user.email "acp-bot@users.noreply.github.com"
           git add clients
-          git diff --cached --quiet || git commit -m "chore: record deploy results [skip ci]"
-          git push
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: record deploy results [skip ci]"
+          for i in 1 2 3; do
+            git push && exit 0
+            git pull --rebase origin "${GITHUB_REF_NAME:-Main1}" || { git rebase --abort; exit 1; }
+            sleep $((i * 3))
+          done
+          exit 1
 
       # Tell the Apps Script the demo is live. It looks up the prospect by
       # client_id in its Demos tab and sends the email with the site link and
@@ -109,3 +128,13 @@ jobs:
           CLIENT_ID: ${{ steps.demo.outputs.client_id }}
           APPS_SCRIPT_SECRET: ${{ secrets.APPS_SCRIPT_SECRET }}
         run: python3 scripts/demo_notify.py "$CLIENT_ID"
+
+      # Any failure on a free-demo run: the sales page is polling for this lead,
+      # and the prospect is waiting on an email. Tell the router so both get an
+      # honest answer within the minute instead of a spinner that never stops.
+      - name: Report failed demo to the router
+        if: failure() && github.event_name == 'repository_dispatch'
+        env:
+          APPS_SCRIPT_SECRET: ${{ secrets.APPS_SCRIPT_SECRET }}
+          LEAD_ID: ${{ github.event.client_payload.lead_id }}
+        run: python3 scripts/demo_failed.py --lead-id "$LEAD_ID" --log /tmp/demo-err.txt
