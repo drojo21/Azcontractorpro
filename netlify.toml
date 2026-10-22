@@ -21,3 +21,11 @@
 # licence gate has nothing to check against at runtime.
 [functions."intake"]
   included_files = ["lib/roc-index.json.gz"]
+
+# The sales page's instant licence check and the self-serve setup form gate on
+# the same index (a straight-to-checkout buyer is verified from their ROC number).
+[functions."roc"]
+  included_files = ["lib/roc-index.json.gz"]
+
+[functions."onboard"]
+  included_files = ["lib/roc-index.json.gz"]

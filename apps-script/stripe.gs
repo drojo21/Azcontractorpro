@@ -48,6 +48,12 @@ function handleStripeEvent(body) {
     console.error('payments sheet failed: ' + err);
   }
 
+  // Autopilot: stop the demo follow-ups, switch the Registry row to active,
+  // and email the buyer their setup link (autopilot.gs).
+  if (kind === 'new_customer') {
+    try { autopilotOnPaid(body); } catch (err) { console.error('autopilotOnPaid failed: ' + err); }
+  }
+
   var subjects = {
     new_customer: '💵 New ' + clean(body.tier_name || body.tier) + ' customer — ' + (clean(body.business_name || body.name) || clean(body.email)),
     payment_failed: '⚠️ Payment failed — ' + (clean(body.business_name) || clean(body.email) || clean(body.client_id)),
@@ -66,9 +72,11 @@ function handleStripeEvent(body) {
       'Phone:    ' + clean(body.phone),
       detail ? 'Detail:   ' + detail : '',
       body.invoice_url ? 'Invoice:  ' + clean(body.invoice_url) : '',
+      kind === 'new_customer' ? 'Upgrade:  ' + (body.promoted ? 'done — the demo is rebuilding as their paid site' : 'not yet — ' + clean(body.promotion_note)) : '',
+      kind === 'new_customer' && body.onboard_url ? 'Setup:    ' + clean(body.onboard_url) + ' (emailed to them; reminders run on their own)' : '',
       '',
       kind === 'new_customer' && !body.client_id
-        ? 'No client_id: create their client.json (scripts/new_client.py) and add the Stripe customer ' + clean(body.customer_id) + ' to your notes.'
+        ? 'No demo attached: their setup form builds the site from their ROC number. Nothing to do unless they get stuck.'
         : '',
       kind === 'payment_failed' ? 'Stripe retries automatically and emails them a link to update their card. Nothing to do unless retries run out.' : '',
       '',

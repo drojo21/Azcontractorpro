@@ -28,8 +28,9 @@
 
 import { patchClient } from '../../lib/store.js';
 import {
-  stripe, getBilling, putBilling, seenEvent, notifyRouter, tierFromLookupKey, TIER_NAMES,
+  stripe, getBilling, putBilling, seenEvent, notifyRouter, tierFromLookupKey, TIER_NAMES, salesUrl,
 } from '../../lib/stripe.js';
+import { promoteInRepo } from '../../lib/promote.js';
 
 const ok = (extra = {}) => new Response(JSON.stringify({ received: true, ...extra }), {
   status: 200, headers: { 'Content-Type': 'application/json' },
@@ -129,6 +130,19 @@ async function onCheckoutCompleted(event) {
     source: s.metadata?.source || '',
   });
 
+  // Autopilot: a purchase from a demo flips that demo into the paid site right
+  // away (one commit → deploy.yml rebuilds it). Best effort — the setup form
+  // runs the same promotion, so a GitHub hiccup here costs minutes, not a sale.
+  let promotion = { promoted: false, reason: 'no demo attached — the setup form creates the site' };
+  if (clientId && tier) {
+    try {
+      promotion = await promoteInRepo(clientId, tier, { email: rec?.email, phone: rec?.phone, name: rec?.name });
+    } catch (err) {
+      promotion = { promoted: false, reason: err.message };
+      console.error('[stripe-webhook] promotion failed:', clientId, err.message);
+    }
+  }
+
   await notifyRouter({
     action: 'stripe_event',
     kind: 'new_customer',
@@ -142,6 +156,10 @@ async function onCheckoutCompleted(event) {
     business_name: rec?.business_name || '',
     customer_id: rec?.customer_id || '',
     subscription_id: subId,
+    session_id: s.id,
+    onboard_url: `${salesUrl()}/thanks.html?session_id=${encodeURIComponent(s.id)}`,
+    promoted: promotion.promoted,
+    promotion_note: promotion.reason,
     livemode: event.livemode,
   });
 }

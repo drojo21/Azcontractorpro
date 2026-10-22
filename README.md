@@ -20,7 +20,11 @@ clients/<client_id>/client.json gets the site URL + claim link committed back
 ```
 
 Leads, gallery and claim events all go through the Apps Script router
-(`apps-script/`), same as before. Nothing about that changed.
+(`apps-script/`), same as before.
+
+**Selling runs itself:** free demo in ~3 minutes on the sales page, follow-ups,
+Stripe checkout, a self-serve setup sheet and the "your site is live" email —
+see [docs/AUTOPILOT.md](docs/AUTOPILOT.md). Pricing research: [docs/RESEARCH-2026-10.md](docs/RESEARCH-2026-10.md).
 
 ## Layout
 

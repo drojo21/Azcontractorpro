@@ -14,7 +14,7 @@ Goes through backend /api/deploy on purpose (not straight to Netlify):
 After a successful publish the site id / url / claim link are written back
 into clients/<id>/client.json so the repo is the record.
 """
-import argparse, json, os, sys, urllib.request, urllib.error
+import argparse, json, os, shutil, sys, urllib.request, urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -23,6 +23,40 @@ sys.path.insert(0, str(ROOT / "core"))
 from acp_schema import ACP  # noqa: E402
 
 SKIP = {".acp-build.json"}
+
+
+def finish_full_pending(cid: str, cpath: Path, acp) -> bool:
+    """A paid Pro/Kit site that had to go out one-page first, now that it has an address.
+
+    tier=full needs a site_url for its canonical tags, and a brand-new site has
+    none until Netlify creates it. onboard.js therefore commits such a record as
+    tier=lite with onboarding.full_pending; the first publish creates the site,
+    and this flips the record to full and rebuilds it so the caller can publish
+    again to the same site in the same run.
+    """
+    client = json.loads(cpath.read_text())
+    onb = client.get("onboarding") or {}
+    if not onb.get("full_pending") or client.get("plan") not in ("pro", "kit"):
+        return False
+    d = client.get("deploy") or {}
+    sub = d.get("netlify_subdomain")
+    url = d.get("custom_domain") or (f"https://{sub}" if sub else "") or d.get("netlify_url", "")
+    if not url:
+        return False
+    client["tier"] = "full"
+    if not client.get("site_url"):
+        client["site_url"] = url
+    onb.pop("full_pending", None)
+    client["onboarding"] = onb
+    cpath.write_text(acp.dumps(client) + "\n")
+
+    sys.path.insert(0, str(ROOT / "builder"))
+    from build_site import build  # noqa: E402
+    out = ROOT / "dist" / cid
+    shutil.rmtree(out, ignore_errors=True)
+    build(cpath, out)
+    print(f"  full {cid}: address known ({url}) — rebuilt as the full site")
+    return True
 
 
 def files_of(folder: Path) -> dict:
@@ -66,7 +100,10 @@ def main():
         return
 
     ok, bad = 0, 0
-    for cid in ids:
+    queue = list(ids)
+    second_pass = set()
+    while queue:
+        cid = queue.pop(0)
         folder = ROOT / "dist" / cid
         cpath = ROOT / "clients" / cid / "client.json"
         if not folder.exists() or not cpath.exists():
@@ -105,11 +142,18 @@ def main():
             d.update({"netlify_url": res.get("url", ""),
                       "last_built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                       "last_tier_built": res.get("tier", client.get("tier", ""))})
+            if res.get("defaultUrl"):
+                d["netlify_subdomain"] = res["defaultUrl"].replace("https://", "").rstrip("/")
             if res.get("claimUrl"):
                 d["claim_url"] = res["claimUrl"]
             cpath.write_text(acp.dumps(client) + "\n")
             ok += 1
             print(f"  ok   {cid} -> {res.get('url')}  ({'reused' if res.get('reused') else 'new site'})")
+            if res.get("domainNote"):
+                print(f"  note {cid}: {res['domainNote']}")
+            if cid not in second_pass and finish_full_pending(cid, cpath, acp):
+                second_pass.add(cid)
+                queue.append(cid)
         elif status == 409:
             print(f"  hold {cid}: {res.get('error')}")  # claimed by contractor — expected
             bad += 1
