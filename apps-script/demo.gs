@@ -22,7 +22,7 @@
  *                       demo_ready. Same value goes in the GitHub Actions secret
  *                       APPS_SCRIPT_SECRET. Without it anyone could trigger emails.
  *   SALES_CLIENT_ID     default azcontractorpro (must also be a Registry row)
- *   SALES_SITE_URL      default https://azcontractorpro.com
+ *   SALES_SITE_URL      default https://azcontractorpro.net
  *   BACKEND_URL         default https://acp-backend-tucson.netlify.app — the email's
  *                       Buy buttons go to <BACKEND_URL>/api/checkout?tier=…&client=…
  *                       (Stripe Checkout: setup fee + monthly, tied to this demo).
@@ -31,10 +31,13 @@
  *   ADMIN_EMAIL         already used by router.gs
  */
 
+// New columns go on the END only — rows already in the sheet are positional.
+// autopilot.gs ensureDemoColumns() adds the header cells to an older sheet.
 var DEMO_COLUMNS = [
   'lead_id', 'requested_at', 'name', 'business', 'roc', 'trade', 'city',
   'phone', 'email', 'message', 'status', 'client_id', 'demo_url', 'claim_url',
-  'dispatched_at', 'ready_at', 'emailed_at', 'notes'
+  'dispatched_at', 'ready_at', 'emailed_at', 'notes',
+  'followups_sent', 'last_followup_at', 'paid_at', 'opted_out_at'
 ];
 
 function salesClientId() {
@@ -42,7 +45,7 @@ function salesClientId() {
 }
 
 function salesSiteUrl() {
-  return (props().getProperty('SALES_SITE_URL') || 'https://azcontractorpro.com').replace(/\/$/, '');
+  return (props().getProperty('SALES_SITE_URL') || 'https://azcontractorpro.net').replace(/\/$/, '');
 }
 
 function demoSheet() {
@@ -53,6 +56,8 @@ function demoSheet() {
     sheet.appendRow(DEMO_COLUMNS);
     sheet.setFrozenRows(1);
     sheet.getRange(1, 1, 1, DEMO_COLUMNS.length).setFontWeight('bold');
+  } else {
+    ensureDemoColumns(sheet);
   }
   return sheet;
 }
@@ -83,7 +88,8 @@ function startDemo(leadId, record, data) {
     message: record.message,
     status: 'requested',
     client_id: '', demo_url: '', claim_url: '',
-    dispatched_at: '', ready_at: '', emailed_at: '', notes: ''
+    dispatched_at: '', ready_at: '', emailed_at: '', notes: '',
+    followups_sent: '', last_followup_at: '', paid_at: '', opted_out_at: ''
   };
 
   if (!row.business && !row.roc) {
@@ -198,6 +204,13 @@ function handleDemoReady(body, params) {
   sheet.getRange(r, demoCol('claim_url')).setValue(claimUrl);
   sheet.getRange(r, demoCol('ready_at')).setValue(nowIso());
   sheet.getRange(r, demoCol('status')).setValue('live');
+  CacheService.getScriptCache().remove('demo_status:' + row.lead_id);
+
+  // The demo site's quote form posts client_id=<this demo>. Without a Registry
+  // row the router answered "unknown client_id" — the form the email below says
+  // "works right now" didn't. Register it, leads to the prospect (status=demo
+  // also copies you; see notify() in router.gs).
+  registerDemoClient(row.client_id, clean(data.business_name) || row.business, row.email);
 
   var emailed = false;
   if (row.email) {
@@ -299,7 +312,7 @@ function sendDemoEmail(row, url, claimUrl) {
     '<tr><td style="padding:8px 28px 28px;font-size:14px;line-height:1.55;color:#5C6068">' +
     (claimUrl ? '<p style="margin:0 0 12px">Want to hold the site in your own Netlify account right away? <a href="' + esc(claimUrl) + '" style="color:#16181C">Claim it here</a> — we keep publishing access so updates still flow.</p>' : '') +
     '<p style="margin:0 0 12px">Everything that\'s included, itemized: <a href="' + esc(sales) + '/#features" style="color:#16181C">' + esc(sales.replace('https://', '')) + '</a>. Questions? Reply to this email' + (admin ? ' or write ' + esc(admin) : '') + '.</p>' +
-    '<p style="margin:0;font-size:12px;color:#8C929C">If you didn\'t request this, ignore it — the demo expires on its own and nothing was charged. Not affiliated with the Arizona Registrar of Contractors.</p>' +
+    '<p style="margin:0;font-size:12px;color:#8C929C">If you didn\'t request this, ignore it — nothing was charged. Not affiliated with the Arizona Registrar of Contractors.</p>' +
     '</td></tr></table></div>';
 
   var text = [

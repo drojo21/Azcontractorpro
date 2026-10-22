@@ -11,6 +11,11 @@
  *   action=claimed   POST   record a site claim          -> Claims sheet
  *   action=demo_ready POST  GitHub Actions: demo site is live -> email prospect (demo.gs)
  *   action=stripe_event POST acp-backend stripe-webhook.js -> Payments sheet + email (stripe.gs)
+ *   action=demo_status GET  sales page polls while a demo builds (autopilot.gs)
+ *   action=demo_failed POST GitHub Actions: demo build refused/crashed (autopilot.gs)
+ *   action=onboarded POST   acp-backend /api/onboard: buyer finished setup (autopilot.gs)
+ *   action=site_live POST   GitHub Actions: a paying customer's site published (autopilot.gs)
+ *   action=unsubscribe GET  follow-up email opt-out link (autopilot.gs)
  *   action=health    GET    deployment check
  *
  * A lead whose client_id is the sales site itself (SALES_CLIENT_ID, default
@@ -85,7 +90,12 @@ function handle(e, method) {
       case 'claimed': return json(handleClaimed(body, params));
       case 'demo_ready': return json(handleDemoReady(body, params));
       case 'stripe_event': return json(handleStripeEvent(body));
-      case 'health':  return json({ ok: true, version: '1.2', time: nowIso() });
+      case 'demo_status': return json(handleDemoStatus(params));
+      case 'demo_failed': return json(handleDemoFailed(body, params));
+      case 'onboarded': return json(handleOnboarded(body));
+      case 'site_live': return json(handleSiteLive(body, params));
+      case 'unsubscribe': return handleUnsubscribe(params);          // an HTML page, not JSON
+      case 'health':  return json({ ok: true, version: '1.3', time: nowIso() });
       default:        return json({ ok: false, error: 'unknown action: ' + action }, 400);
     }
   } catch (err) {
@@ -251,8 +261,13 @@ function isDuplicate(sheet, record) {
 }
 
 function notify(client, record) {
-  var to = client.notification_email || props().getProperty('ADMIN_EMAIL');
+  var admin = props().getProperty('ADMIN_EMAIL');
+  var to = client.notification_email || admin;
   if (!to) return;
+
+  // A quote request on a free DEMO site is the strongest buying signal there is:
+  // the prospect sees a real customer arrive, and you get a copy to follow up on.
+  var isDemo = String(client.status || '').toLowerCase() === 'demo';
 
   var subject = 'New lead — ' + (client.business_name || client.client_id) +
     ' — ' + record.name;
@@ -266,10 +281,15 @@ function notify(client, record) {
     '',
     '— from ' + (record.page || 'the website') + ' at ' + record.timestamp
   ];
+  if (isDemo) {
+    lines.push('', 'This request came through your free demo site. Keep the site (and the requests coming): ' +
+      salesSiteUrl() + '/#pricing');
+  }
 
   try {
     MailApp.sendEmail({
       to: to,
+      bcc: isDemo && admin && admin !== to ? admin : undefined,
       subject: subject,
       body: lines.join('\n'),
       replyTo: record.email || undefined,
